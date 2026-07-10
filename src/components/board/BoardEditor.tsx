@@ -372,6 +372,44 @@ export function BoardEditor({ boardId }: { boardId: string }) {
     setPageIndex(Math.max(0, pageIndex - 1));
   }
 
+  /* ----- 教材匯入：勾選頁 → 新增黑板頁（dataURL 背景）→ 切換逐頁模式 ----- */
+  function importMaterial(materialPages: MaterialPage[]) {
+    const fresh = getItem("boards", boardId);
+    if (!fresh) return;
+    const newPages: BoardPage[] = materialPages.map((pg) => ({
+      id: nanoid(8),
+      background: pg.dataUrl,
+      bgSize: { w: pg.w, h: pg.h },
+      widgets: [],
+      strokes: [],
+    }));
+    try {
+      updateItem("boards", boardId, {
+        pages: [...fresh.pages, ...newPages],
+        displayMode: "paged",
+      });
+    } catch (e) {
+      if (e instanceof StorageQuotaError) {
+        alert(e.message + "\n可回上一步減少勾選頁數。");
+        return;
+      }
+      throw e;
+    }
+    setMaterialOpen(false);
+    setPageIndex(fresh.pages.length); // 跳到第一張匯入頁
+  }
+
+  /* ----- 背景顏色 ----- */
+  function applyBgAll(color: string) {
+    const fresh = getItem("boards", boardId);
+    if (!fresh) return;
+    updateItem("boards", boardId, {
+      pages: fresh.pages.map((p) =>
+        p.background?.startsWith("data:") ? p : { ...p, background: color || undefined }
+      ),
+    });
+  }
+
   /* ----- 聚光燈 ----- */
   function handleSpotMove(e: React.PointerEvent) {
     const rect = containerRef.current!.getBoundingClientRect();
