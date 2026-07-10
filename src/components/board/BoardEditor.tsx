@@ -496,9 +496,13 @@ export function BoardEditor({ boardId }: { boardId: string }) {
         className="relative min-h-0 flex-1 touch-none overflow-hidden"
         style={{
           cursor:
-            tool === "pen" ? "crosshair" : tool === "erase" ? "cell" : tool === "spotlight" ? "none" : "grab",
+            tool === "pen" ? "crosshair" : tool === "erase" ? "cell" : tool === "spotlight" ? "none" : paged ? "default" : "grab",
           background:
-            "radial-gradient(circle, var(--border) 1px, transparent 1px) 0 0 / 28px 28px",
+            !paged && page?.background && !page.background.startsWith("data:")
+              ? page.background
+              : paged
+                ? "var(--tint)"
+                : "radial-gradient(circle, var(--border) 1px, transparent 1px) 0 0 / 28px 28px",
         }}
         onPointerDown={(e) => {
           if (tool === "select" && e.target === e.currentTarget) setSelectedId(null);
@@ -506,8 +510,28 @@ export function BoardEditor({ boardId }: { boardId: string }) {
       >
         <div
           className="absolute left-0 top-0 origin-top-left"
-          style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})` }}
+          style={{ transform: `translate(${effView.x}px, ${effView.y}px) scale(${effView.scale})` }}
         >
+          {/* 逐頁模式：頁面底（教材圖或色紙） */}
+          {paged && (
+            <div
+              aria-hidden
+              className="absolute left-0 top-0 overflow-hidden rounded-sm [box-shadow:var(--shadow-raised)]"
+              style={{
+                width: pageDim.w,
+                height: pageDim.h,
+                background:
+                  page?.background && !page.background.startsWith("data:")
+                    ? page.background
+                    : "#ffffff",
+              }}
+            >
+              {isMaterialPage && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={page!.background!} alt="" width={pageDim.w} height={pageDim.h} draggable={false} />
+              )}
+            </div>
+          )}
           {/* Widgets */}
           {page?.widgets
             .slice()
