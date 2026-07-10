@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-/** Lovable 卡片：奶油表面 + #eceae4 邊線，無陰影 */
+/** Lovable 卡片：微抬升表面 + 邊線 + 極淺陰影 */
 export function Card({
   className = "",
   ...rest
