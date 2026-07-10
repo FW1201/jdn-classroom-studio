@@ -585,6 +585,9 @@ export function BoardEditor({ boardId }: { boardId: string }) {
           <IconButton label="聚光燈" active={tool === "spotlight"} onClick={() => setTool(tool === "spotlight" ? "select" : "spotlight")}>
             <Flashlight className="size-4.5" />
           </IconButton>
+          <IconButton label="班級名單" active={rosterOpen} onClick={() => setRosterOpen((v) => !v)}>
+            <Users className="size-4.5" />
+          </IconButton>
           {tool === "pen" && (
             <div className="ml-1 flex items-center gap-1.5" data-ui>
               {PEN_COLORS.map((c) => (
