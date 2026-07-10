@@ -658,6 +658,9 @@ export function BoardEditor({ boardId }: { boardId: string }) {
               <IconButton label="縮小字級" onClick={() => patchWidget(selected.id, { props: { ...selected.props, fontSize: Math.max(14, (Number(selected.props.fontSize) || 40) - 6) } })}>
                 <AArrowDown className="size-4" />
               </IconButton>
+              <IconButton label="更換字體" active={fontOpen} onClick={() => setFontOpen((v) => !v)}>
+                <Type className="size-4" />
+              </IconButton>
             </>
           )}
           <IconButton label="移到最上層" onClick={() => patchWidget(selected.id, { z: nextZ() })}>
