@@ -54,7 +54,12 @@ import {
 } from "lucide-react";
 import type { BoardPage, Stroke, Widget, WidgetType } from "@/lib/types";
 import { useItem } from "@/lib/hooks";
-import { getItem, updateItem } from "@/lib/storage";
+import { getItem, updateItem, StorageQuotaError } from "@/lib/storage";
+import type { MaterialPage } from "@/lib/materials";
+import { MaterialImportDialog } from "./MaterialImportDialog";
+import { TimerPanel } from "./TimerPanel";
+import { BgColorPopover } from "./BgColorPopover";
+import { FontPicker } from "./FontPicker";
 import { ExportToDriveButton } from "@/components/google/ExportToDrive";
 import { exportHtmlAsSlides } from "@/lib/google/drive";
 import { boardToHtml } from "@/lib/google/exporters";
