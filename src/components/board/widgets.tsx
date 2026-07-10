@@ -90,7 +90,10 @@ export function WidgetContent({
       return (
         <div
           className="size-full overflow-hidden p-3 leading-snug"
-          style={{ fontSize: Number(p.fontSize) || 40 }}
+          style={{
+            fontSize: Number(p.fontSize) || 40,
+            fontFamily: p.fontFamily ? String(p.fontFamily) : undefined,
+          }}
         >
           {editing ? (
             <textarea
