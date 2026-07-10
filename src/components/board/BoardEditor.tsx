@@ -383,17 +383,23 @@ export function BoardEditor({ boardId }: { boardId: string }) {
               結束投影
             </Button>
           ) : (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => {
-                document.documentElement.requestFullscreen?.().catch(() => {});
-                router.push(`/board/${board.id}?present=1`);
-              }}
-            >
-              <Play className="size-4" aria-hidden />
-              投影
-            </Button>
+            <>
+              <ExportToDriveButton
+                label="匯出簡報"
+                makeExport={() => exportHtmlAsSlides(board.title, boardToHtml(board))}
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => {
+                  document.documentElement.requestFullscreen?.().catch(() => {});
+                  router.push(`/board/${board.id}?present=1`);
+                }}
+              >
+                <Play className="size-4" aria-hidden />
+                投影
+              </Button>
+            </>
           )}
         </div>
       </header>
