@@ -43,8 +43,14 @@ export async function pdfToPages(
   data: ArrayBuffer,
   onProgress?: (done: number, total: number) => void
 ): Promise<MaterialPage[]> {
+  console.log("[mat] loading pdfjs…");
   const pdfjs = await loadPdfjs();
+  console.log("[mat] pdfjs loaded, version:", pdfjs.version, "port:", !!pdfjs.GlobalWorkerOptions.workerPort);
   const loadingTask = pdfjs.getDocument({ data });
+  loadingTask.promise.then(
+    () => console.log("[mat] getDocument resolved"),
+    (e) => console.log("[mat] getDocument REJECTED:", e?.message)
+  );
   const doc = await loadingTask.promise;
   const pages: MaterialPage[] = [];
   for (let i = 1; i <= doc.numPages; i++) {
