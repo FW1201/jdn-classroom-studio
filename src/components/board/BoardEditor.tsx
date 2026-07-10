@@ -49,6 +49,9 @@ import {
 import type { BoardPage, Stroke, Widget, WidgetType } from "@/lib/types";
 import { useItem } from "@/lib/hooks";
 import { getItem, updateItem } from "@/lib/storage";
+import { ExportToDriveButton } from "@/components/google/ExportToDrive";
+import { exportHtmlAsSlides } from "@/lib/google/drive";
+import { boardToHtml } from "@/lib/google/exporters";
 import { IconButton, Button } from "@/components/ui/Button";
 import { WidgetContent, createWidget, nextZ, syncZCounter } from "./widgets";
 import { Dialog } from "@/components/ui/Dialog";
