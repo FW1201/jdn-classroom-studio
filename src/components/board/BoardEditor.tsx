@@ -160,6 +160,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
   const [view, setView] = useState({ x: 0, y: 0, scale: 1 });
   const [dialog, setDialog] = useState<WidgetType | null>(null);
   const [spot, setSpot] = useState({ x: 0.5, y: 0.5 });
+  const [rosterOpen, setRosterOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
