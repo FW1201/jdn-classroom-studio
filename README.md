@@ -15,10 +15,18 @@
 **管理中樞**（`/`）：四類資料（名單/黑板/視覺化/成果牆）統計與建檔入口；全站 JSON 匯出/匯入備份；學生名單 CSV 匯入（`座號,姓名,標籤`）。
 **點名與分組**（`/roster-tools`）：選班級 → 隨機點名（投影大字、不重複、缺席排除）／隨機分組（分 N 組或每組 N 人，結果一鍵存成果牆）。
 
+## Google 雲端同步（選配）
+
+無登入依然 100% 可用；設定 `NEXT_PUBLIC_GOOGLE_CLIENT_ID` 後（步驟見 [docs/gcp-setup.md](docs/gcp-setup.md)）多出：
+
+- **雲端備份**：全站資料 JSON 備份到 Drive `appDataFolder`（滾動保留 5 份），可合併／覆蓋還原
+- **匯出 Google Workspace**：名單/成果牆 → 試算表、成果牆 → 文件、黑板 → 簡報、視覺化 HTML → Drive 檔案
+- **分享到 Classroom**：任何匯出檔或投稿入口一鍵發佈（免 Classroom API、免審核的分享網址）
+- 僅使用非敏感 scopes（`drive.file` + `drive.appdata`）：本站只能存取自己建立的檔案；token 只存記憶體
+
 ## Roadmap
 
-- **V2 進行中**：Google 選配同步層（GIS 登入、Drive appData 雲端備份、匯出 Google Sheets/Docs/Slides、Classroom 分享網址橋接）
-- **暫緩**：課節工作區（把黑板＋視覺化＋成果牆綁成一堂課的劇本）、成果牆即時投稿後端
+- **暫緩**：課節工作區（把黑板＋視覺化＋成果牆綁成一堂課的劇本）、成果牆即時投稿後端、Classroom API 完整整合
 
 ## 技術棧
 
