@@ -60,7 +60,7 @@ export async function pdfToPages(
     onProgress?.(i, doc.numPages);
     page.cleanup();
   }
-  await doc.destroy();
+  await loadingTask.destroy();
   return pages;
 }
 
