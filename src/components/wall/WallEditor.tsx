@@ -368,6 +368,18 @@ function WallEditorInner() {
             <ImageIcon className="size-4" aria-hidden />
             加入圖片
           </Button>
+          {wall.cards.length > 0 && (
+            <>
+              <ExportToDriveButton
+                label="匯出 Google 文件"
+                makeExport={() => exportHtmlAsDoc(wall.title, wallToHtml(wall))}
+              />
+              <ExportToDriveButton
+                label="匯出試算表"
+                makeExport={() => exportCsvAsSheet(wall.title, wallToCsv(wall))}
+              />
+            </>
+          )}
           <div className="ml-auto flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <label className="flex min-w-0 flex-col gap-1.5 text-sm text-text-muted sm:flex-row sm:items-center sm:gap-2">
               投稿入口網址
