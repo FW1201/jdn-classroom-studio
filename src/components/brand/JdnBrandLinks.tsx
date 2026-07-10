@@ -28,33 +28,45 @@ const SOCIAL_LINKS = [
 ] as const;
 
 export function JdnBrandLinks({ compact = false }: { compact?: boolean }) {
-  return (
-    <section
-      aria-label="數位敘事力期刊社群"
-      className={compact ? "flex flex-col gap-2" : "flex flex-col gap-4"}
-    >
-      <div>
-        <p className={compact ? "text-xs font-semibold text-text" : "text-base font-semibold text-text"}>
-          數位敘事力期刊
-        </p>
-        <p className={compact ? "text-[12px] leading-relaxed text-text-muted" : "text-sm text-text-muted"}>
-          Journal of Digital Narrative 出品
-        </p>
+  if (compact) {
+    // 側欄空間有限：純圖示按鈕，不佔文字寬度，僅靠 aria-label / title 傳達
+    return (
+      <div className="flex items-center gap-1.5" role="group" aria-label="數位敘事力期刊社群">
+        {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            title={label}
+            aria-label={`前往數位敘事力期刊 ${label}（另開新分頁）`}
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-control bg-surface-raised text-text transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-border-strong hover:bg-hover hover:[box-shadow:var(--shadow-raised)] active:translate-y-0"
+          >
+            <Icon className="size-4 shrink-0" aria-hidden />
+          </a>
+        ))}
       </div>
-      <div className={compact ? "grid grid-cols-4 gap-2" : "grid gap-2 sm:grid-cols-2"}>
-        {SOCIAL_LINKS.map(({ label, shortLabel, href, icon: Icon }) => (
+    );
+  }
+
+  return (
+    <section aria-label="數位敘事力期刊社群" className="flex flex-col gap-4">
+      <div>
+        <p className="text-base font-semibold text-text">數位敘事力期刊</p>
+        <p className="text-sm text-text-muted">Journal of Digital Narrative 出品</p>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
           <a
             key={label}
             href={href}
             target="_blank"
             rel="noreferrer"
             aria-label={`前往數位敘事力期刊 ${label}（另開新分頁）`}
-            className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-control bg-surface-raised px-3 text-sm font-medium text-text transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-border-strong hover:bg-hover hover:[box-shadow:var(--shadow-raised)] active:translate-y-0 ${
-              compact ? "min-w-11 px-2" : "justify-start"
-            }`}
+            className="inline-flex min-h-11 items-center justify-start gap-2 rounded-md border border-control bg-surface-raised px-3 text-sm font-medium text-text transition-[transform,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-border-strong hover:bg-hover hover:[box-shadow:var(--shadow-raised)] active:translate-y-0"
           >
             <Icon className="size-4.5 shrink-0" aria-hidden />
-            <span>{compact ? shortLabel : label}</span>
+            <span>{label}</span>
           </a>
         ))}
       </div>
