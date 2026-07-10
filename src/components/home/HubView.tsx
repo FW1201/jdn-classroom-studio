@@ -38,7 +38,7 @@ const MODES = [
   {
     key: "games" as const,
     href: "/games",
-    label: "互動遊戲",
+    label: "互動視覺化",
     desc: "貼上 AI 生成的 HTML 遊戲，沙箱安全執行、全螢幕投影",
     icon: Gamepad2,
     color: "var(--game)",
@@ -98,7 +98,7 @@ export function HubView() {
       title: item.title,
       updatedAt: item.updatedAt,
       href: `/game/${item.id}`,
-      label: "互動遊戲",
+      label: "互動視覺化",
       color: "var(--game)",
       icon: Gamepad2,
     })),
@@ -151,7 +151,7 @@ export function HubView() {
           都在這裡。
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-text-muted">
-          教學黑板、互動遊戲、成果收集牆——資料只存在你的瀏覽器，開頁即用，無需登入。
+          教學黑板、互動視覺化、成果收集牆——資料只存在你的瀏覽器，開頁即用，無需登入。
         </p>
         <p className="text-sm font-medium text-text-muted" aria-label="課堂工作流程：備課、上課、收成果">
           備課 <span aria-hidden>→</span> 上課 <span aria-hidden>→</span> 收成果，一個工作站完成

@@ -76,7 +76,7 @@ export interface Board extends BaseEntity {
   rosterId?: string;
 }
 
-/* ---------- 互動遊戲 ---------- */
+/* ---------- 互動視覺化 ---------- */
 
 export interface Game extends BaseEntity {
   title: string;
