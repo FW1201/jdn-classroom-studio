@@ -27,6 +27,7 @@ const NAV = [
   { href: "/games", label: "互動視覺化", icon: Gamepad2, color: "var(--game)" },
   { href: "/walls", label: "成果收集牆", icon: LayoutGrid, color: "var(--wall)" },
   { href: "/rosters", label: "學生名單", icon: Users, color: "var(--roster)" },
+  { href: "/roster-tools", label: "點名與分組", icon: Dices, color: "var(--roster)" },
   { href: "/settings", label: "設定", icon: Settings },
 ] as const;
 
