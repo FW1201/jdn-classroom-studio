@@ -65,7 +65,9 @@ export interface Stroke {
 
 export interface BoardPage {
   id: string;
-  background?: string; // 顏色 token 或 dataURL
+  background?: string; // CSS 顏色（背景色）或 dataURL（教材頁面圖）
+  /** 教材頁面圖的原始尺寸（有 dataURL 背景時使用，供逐頁模式等比縮放） */
+  bgSize?: { w: number; h: number };
   widgets: Widget[];
   strokes: Stroke[];
 }
@@ -74,6 +76,8 @@ export interface Board extends BaseEntity {
   title: string;
   pages: BoardPage[];
   rosterId?: string;
+  /** canvas＝無限畫布（預設）；paged＝逐頁顯示（教材匯入後） */
+  displayMode?: "canvas" | "paged";
 }
 
 /* ---------- 互動視覺化 ---------- */
