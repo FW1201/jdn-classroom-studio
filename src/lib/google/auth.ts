@@ -206,10 +206,5 @@ export function disconnectGoogle() {
       /* noop */
     }
   }
-  try {
-    localStorage.removeItem(CONNECT_FLAG);
-  } catch {
-    /* noop */
-  }
   setState({ status: "disconnected", profile: null, error: undefined });
 }
