@@ -156,11 +156,12 @@ export function GuideView() {
                 ))}
               </ul>
               <div className="shrink-0 sm:self-center">
-                <Link href={stepHref(i, href)}>
-                  <Button variant="surface" size="sm">
-                    {linkLabel}
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                  </Button>
+                <Link
+                  href={stepHref(i, href)}
+                  className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-sm border border-border bg-surface px-3 text-sm font-medium text-text transition-colors duration-200 hover:bg-hover"
+                >
+                  {linkLabel}
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
                 </Link>
               </div>
             </Card>

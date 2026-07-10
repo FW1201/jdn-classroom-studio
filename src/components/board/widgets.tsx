@@ -50,7 +50,7 @@ export function createWidget(
 
 /* ---------- YouTube URL → embed ---------- */
 
-export function youtubeEmbed(url: string): string | null {
+function youtubeEmbed(url: string): string | null {
   const m = url.match(
     /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,20})/
   );
