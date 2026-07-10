@@ -25,10 +25,13 @@ let pdfjsPromise: Promise<typeof import("pdfjs-dist")> | null = null;
 async function loadPdfjs() {
   if (!pdfjsPromise) {
     pdfjsPromise = import("pdfjs-dist").then((pdfjs) => {
-      pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-        "pdfjs-dist/build/pdf.worker.min.mjs",
-        import.meta.url
-      ).toString();
+      // Turbopack 下 workerSrc 握手會靜默卡住：改自行建立 module worker
+      // 交給 workerPort（同一份 pdfjs-dist 資產，版本必然一致）
+      const worker = new Worker(
+        new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url),
+        { type: "module" }
+      );
+      pdfjs.GlobalWorkerOptions.workerPort = worker;
       return pdfjs;
     });
   }
