@@ -195,6 +195,18 @@ body {
   transform: translateY(0);
 }
 
+/* 面板滑入（黑板名單側欄等） */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* 尊重 reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,
