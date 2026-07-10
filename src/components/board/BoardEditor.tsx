@@ -701,6 +701,14 @@ export function BoardEditor({ boardId }: { boardId: string }) {
           <IconButton label="班級名單" active={rosterOpen} onClick={() => setRosterOpen((v) => !v)}>
             <Users className="size-4.5" />
           </IconButton>
+          <IconButton label="計時器" active={timerOpen} onClick={() => setTimerOpen((v) => !v)}>
+            <TimerIcon className="size-4.5" />
+          </IconButton>
+          {!present && (
+            <IconButton label="頁面背景" active={bgOpen} onClick={() => setBgOpen((v) => !v)}>
+              <PaintBucket className="size-4.5" />
+            </IconButton>
+          )}
           {tool === "pen" && (
             <div className="ml-1 flex items-center gap-1.5" data-ui>
               {PEN_COLORS.map((c) => (
