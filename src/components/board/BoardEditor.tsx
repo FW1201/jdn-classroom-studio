@@ -56,6 +56,7 @@ import { boardToHtml } from "@/lib/google/exporters";
 import { IconButton, Button } from "@/components/ui/Button";
 import { WidgetContent, createWidget, nextZ, syncZCounter } from "./widgets";
 import { Dialog } from "@/components/ui/Dialog";
+import { RosterPanel } from "./RosterPanel";
 
 /* ---------- 筆跡 → SVG path ---------- */
 
