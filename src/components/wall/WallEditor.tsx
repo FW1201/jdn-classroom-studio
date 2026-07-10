@@ -82,7 +82,10 @@ function QrDialog({ url, onClose }: { url: string; onClose: () => void }) {
           <img src={dataUrl} alt={`投稿入口 QR：${url}`} className="size-72 md:size-96" />
         )}
         <p className="max-w-sm break-all text-center text-sm text-[#5f5f5d]">{url}</p>
-        <Button variant="primary" onClick={onClose}>關閉</Button>
+        <div className="flex flex-wrap justify-center gap-2">
+          <ClassroomShareButton url={url} size="md" />
+          <Button variant="primary" onClick={onClose}>關閉</Button>
+        </div>
       </div>
     </Dialog>
   );
