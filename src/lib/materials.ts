@@ -130,14 +130,19 @@ export const GOOGLE_PICKER_API_KEY =
 declare global {
   interface Window {
     gapi?: { load: (api: string, cb: () => void) => void };
-    google?: any; // GIS + Picker 共用命名空間
   }
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Picker 掛在 GIS 的 window.google 命名空間下（auth.ts 已宣告該型別，這裡以 any 存取 picker 分支）
+function pickerNs(): any {
+  return (window as unknown as { google?: any }).google?.picker;
 }
 
 let pickerReady: Promise<void> | null = null;
 
 function loadPicker(): Promise<void> {
-  if (window.google?.picker) return Promise.resolve();
+  if (pickerNs()) return Promise.resolve();
   if (pickerReady) return pickerReady;
   pickerReady = new Promise((resolve, reject) => {
     const done = () => window.gapi!.load("picker", () => resolve());
