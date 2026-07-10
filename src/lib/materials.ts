@@ -60,7 +60,13 @@ export async function pdfToPages(
     canvas.width = Math.ceil(viewport.width);
     canvas.height = Math.ceil(viewport.height);
     const ctx = canvas.getContext("2d")!;
-    await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+    console.log("[mat] rendering page", i, canvas.width, "x", canvas.height);
+    const task = page.render({ canvas, canvasContext: ctx, viewport });
+    task.promise.then(
+      () => console.log("[mat] page", i, "rendered"),
+      (e) => console.log("[mat] page", i, "render REJECTED:", e?.message)
+    );
+    await task.promise;
     pages.push({
       dataUrl: canvas.toDataURL("image/jpeg", JPEG_QUALITY),
       w: canvas.width,
