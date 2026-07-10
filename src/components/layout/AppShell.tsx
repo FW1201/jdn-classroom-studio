@@ -23,7 +23,7 @@ import { JdnBrandLinks } from "@/components/brand/JdnBrandLinks";
 const NAV = [
   { href: "/", label: "總覽", icon: Home },
   { href: "/boards", label: "教學黑板", icon: Presentation, color: "var(--board)" },
-  { href: "/games", label: "互動遊戲", icon: Gamepad2, color: "var(--game)" },
+  { href: "/games", label: "互動視覺化", icon: Gamepad2, color: "var(--game)" },
   { href: "/walls", label: "成果收集牆", icon: LayoutGrid, color: "var(--wall)" },
   { href: "/rosters", label: "學生名單", icon: Users, color: "var(--roster)" },
   { href: "/settings", label: "設定", icon: Settings },
