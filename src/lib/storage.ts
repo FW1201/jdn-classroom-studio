@@ -98,10 +98,6 @@ export function estimateUsageBytes(): number {
   return total;
 }
 
-export function usageRatio(): number {
-  return estimateUsageBytes() / STORAGE_LIMIT_BYTES;
-}
-
 export class StorageQuotaError extends Error {
   constructor() {
     super("儲存空間不足：請先匯出備份並刪除舊資料，或縮小圖片後再試。");
