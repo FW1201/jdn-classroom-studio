@@ -45,6 +45,7 @@ import {
   ZoomOut,
   AArrowUp,
   AArrowDown,
+  Users,
 } from "lucide-react";
 import type { BoardPage, Stroke, Widget, WidgetType } from "@/lib/types";
 import { useItem } from "@/lib/hooks";
