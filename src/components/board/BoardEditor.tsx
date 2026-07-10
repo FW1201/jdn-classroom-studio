@@ -321,7 +321,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
   }
   function eraseAt(clientX: number, clientY: number) {
     const [x, y] = toStage(clientX, clientY);
-    const r = 24 / view.scale;
+    const r = 24 / effView.scale;
     mutatePage((p) => ({
       strokes: p.strokes.filter(
         (s) => !s.points.some(([px, py]) => Math.hypot(px - x, py - y) < r)
