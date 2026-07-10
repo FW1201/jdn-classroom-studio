@@ -451,16 +451,25 @@ export function BoardEditor({ boardId }: { boardId: string }) {
           )}
         </div>
         <div className="flex items-center gap-1.5">
-          <IconButton label="縮小" onClick={() => setView((v) => ({ ...v, scale: Math.max(0.2, v.scale / 1.2) }))}>
+          <IconButton
+            label={paged ? "切換為無限畫布" : "切換為逐頁顯示"}
+            active={paged}
+            onClick={() =>
+              updateItem("boards", board.id, { displayMode: paged ? "canvas" : "paged" })
+            }
+          >
+            {paged ? <InfinityIcon className="size-4.5" /> : <GalleryHorizontal className="size-4.5" />}
+          </IconButton>
+          <IconButton label="縮小" disabled={paged} onClick={() => setView((v) => ({ ...v, scale: Math.max(0.2, v.scale / 1.2) }))}>
             <ZoomOut className="size-4.5" />
           </IconButton>
           <span className="w-12 text-center text-sm tabular-nums text-text-muted">
-            {Math.round(view.scale * 100)}%
+            {Math.round(effView.scale * 100)}%
           </span>
-          <IconButton label="放大" onClick={() => setView((v) => ({ ...v, scale: Math.min(3, v.scale * 1.2) }))}>
+          <IconButton label="放大" disabled={paged} onClick={() => setView((v) => ({ ...v, scale: Math.min(3, v.scale * 1.2) }))}>
             <ZoomIn className="size-4.5" />
           </IconButton>
-          <IconButton label="重設檢視" onClick={() => setView({ x: 0, y: 0, scale: 1 })}>
+          <IconButton label="重設檢視" disabled={paged} onClick={() => setView({ x: 0, y: 0, scale: 1 })}>
             <Maximize className="size-4.5" />
           </IconButton>
           {present ? (
