@@ -222,10 +222,18 @@ function RosterCard({ roster }: { roster: Roster }) {
             新增
           </Button>
         </form>
-        <Button className="w-fit" variant="ghost" size="sm" onClick={() => csvRef.current?.click()}>
-          <Upload className="size-4" aria-hidden />
-          匯入 CSV
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="ghost" size="sm" onClick={() => csvRef.current?.click()}>
+            <Upload className="size-4" aria-hidden />
+            匯入 CSV
+          </Button>
+          {roster.students.length > 0 && (
+            <ExportToDriveButton
+              label="匯出 Google 試算表"
+              makeExport={() => exportCsvAsSheet(`${roster.name} 名單`, rosterToCsv(roster))}
+            />
+          )}
+        </div>
         <input
           ref={csvRef}
           type="file"
