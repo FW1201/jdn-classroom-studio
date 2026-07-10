@@ -8,6 +8,7 @@ import {
   Gamepad2,
   LayoutGrid,
   Users,
+  Dices,
   Settings,
   Home,
   Menu,
