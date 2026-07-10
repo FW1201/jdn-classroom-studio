@@ -29,7 +29,6 @@ const PREFIX = "jcs:";
 const SETTINGS_KEY = `${PREFIX}settings`;
 const META_KEY = `${PREFIX}meta`;
 const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024; // 保守估 5MB
-export const STORAGE_WARN_RATIO = 0.85;
 
 const isBrowser = typeof window !== "undefined";
 
