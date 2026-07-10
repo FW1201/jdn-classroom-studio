@@ -96,17 +96,6 @@ export function getGoogleAuthState(): GoogleAuthState {
   return state;
 }
 
-/** 曾成功連接的輕量旗標（僅 boolean，不含任何 token）— 供 UI 顯示提示 */
-const CONNECT_FLAG = "jcs:google-connected";
-
-export function wasConnectedBefore(): boolean {
-  try {
-    return localStorage.getItem(CONNECT_FLAG) === "1";
-  } catch {
-    return false;
-  }
-}
-
 /* ---------- GIS script 載入 ---------- */
 
 let gisLoading: Promise<void> | null = null;
