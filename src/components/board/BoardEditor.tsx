@@ -678,6 +678,9 @@ export function BoardEditor({ boardId }: { boardId: string }) {
         </div>
       </footer>
 
+      {/* ===== 名單側欄（名單 ↔ 黑板串接）===== */}
+      {rosterOpen && <RosterPanel board={board} onClose={() => setRosterOpen(false)} />}
+
       {/* ===== 對話框 ===== */}
       {dialog === "video" && (
         <InputDialog
