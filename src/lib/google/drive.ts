@@ -148,7 +148,7 @@ export function exportRawFile(
 
 /* ---------- Classroom 分享（免 API、免驗證）---------- */
 
-export function classroomShareUrl(url: string): string {
+function classroomShareUrl(url: string): string {
   return `https://classroom.google.com/share?url=${encodeURIComponent(url)}`;
 }
 
