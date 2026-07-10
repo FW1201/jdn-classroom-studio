@@ -63,7 +63,8 @@ export async function pdfToPages(
     canvas.height = Math.ceil(viewport.height);
     const ctx = canvas.getContext("2d")!;
     console.log("[mat] rendering page", i, canvas.width, "x", canvas.height);
-    const task = page.render({ canvas, canvasContext: ctx, viewport });
+    // intent:'print'：不走 requestAnimationFrame 分段排程（部分內嵌/背景環境 rAF 不觸發會使 display intent 懸置）
+    const task = page.render({ canvas, canvasContext: ctx, viewport, intent: "print" });
     task.promise.then(
       () => console.log("[mat] page", i, "rendered"),
       (e) => console.log("[mat] page", i, "render REJECTED:", e?.message)
