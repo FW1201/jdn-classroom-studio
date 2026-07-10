@@ -5,12 +5,11 @@
    SSR 期間回傳空集合，client hydrate 後讀取 localStorage
    ============================================================ */
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import type { Board, Game, Roster, Settings, Wall } from "./types";
 import {
   type CollectionKey,
   getCollection,
-  getItem,
   getSettings,
   subscribe,
 } from "./storage";
@@ -59,25 +58,3 @@ export function useHydrated(): boolean {
     () => false
   );
 }
-
-/** debounce 寫入（黑板高頻編輯用） */
-export function useDebouncedCallback<A extends unknown[]>(
-  fn: (...args: A) => void,
-  delay = 400
-): (...args: A) => void {
-  const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(
-    null
-  );
-  useEffect(() => () => {
-    if (timer) clearTimeout(timer);
-  }, [timer]);
-  return useCallback(
-    (...args: A) => {
-      if (timer) clearTimeout(timer);
-      setTimer(setTimeout(() => fn(...args), delay));
-    },
-    [fn, delay, timer]
-  );
-}
-
-export { getItem };
