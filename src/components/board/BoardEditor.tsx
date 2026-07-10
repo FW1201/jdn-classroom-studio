@@ -46,6 +46,11 @@ import {
   AArrowUp,
   AArrowDown,
   Users,
+  FileUp,
+  Timer as TimerIcon,
+  PaintBucket,
+  GalleryHorizontal,
+  Infinity as InfinityIcon,
 } from "lucide-react";
 import type { BoardPage, Stroke, Widget, WidgetType } from "@/lib/types";
 import { useItem } from "@/lib/hooks";
