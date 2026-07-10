@@ -17,9 +17,9 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const metadata: Metadata = {
-  title: "JDN 課堂工作站",
+  title: "JDN 課堂工作站｜數位敘事力期刊",
   description:
-    "教師單機、投影導向的課堂工作站：教學黑板、互動遊戲、成果收集牆，資料只存在你的瀏覽器。",
+    "數位敘事力期刊出品。教師單機、投影導向的課堂工作站：教學黑板、互動遊戲、成果收集牆，資料只存在你的瀏覽器。",
 };
 
 export const viewport: Viewport = {
@@ -40,7 +40,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-Hant" className={`${nunito.variable} ${notoSansTC.variable}`}>
+    <html
+      lang="zh-Hant"
+      className={`${nunito.variable} ${notoSansTC.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

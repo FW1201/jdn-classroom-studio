@@ -7,7 +7,7 @@
    展示：grid / masonry / columns、加星、隱藏、洗牌、聚光逐張揭示
    ============================================================ */
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Papa from "papaparse";
@@ -38,6 +38,7 @@ import { useItem } from "@/lib/hooks";
 import { getItem, updateItem, StorageQuotaError } from "@/lib/storage";
 import { Button, IconButton } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/Card";
+import { Dialog } from "@/components/ui/Dialog";
 
 /* ---------- CSV：欄位「作者,內容」或「內容」；Google 表單匯出亦可 ---------- */
 
@@ -67,13 +68,12 @@ function parseCardsCsv(text: string): WallCard[] {
 
 function QrDialog({ url, onClose }: { url: string; onClose: () => void }) {
   const [dataUrl, setDataUrl] = useState("");
-  useMemo(() => {
+  useEffect(() => {
     QRCode.toDataURL(url, { width: 480, margin: 1 }).then(setDataUrl).catch(() => {});
   }, [url]);
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal aria-label="投稿 QR 碼">
-      <div className="absolute inset-0 bg-black/70" onClick={onClose} aria-hidden />
-      <div className="relative flex flex-col items-center gap-4 rounded-xl bg-white p-8">
+    <Dialog title="投稿入口 QR 碼" onClose={onClose} maxWidth="max-w-xl" panelClassName="bg-white text-[#1c1c1c]" scrimClassName="bg-black/70">
+      <div className="flex flex-col items-center gap-4">
         {dataUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={dataUrl} alt={`投稿入口 QR：${url}`} className="size-72 md:size-96" />
@@ -81,7 +81,7 @@ function QrDialog({ url, onClose }: { url: string; onClose: () => void }) {
         <p className="max-w-sm break-all text-center text-sm text-[#5f5f5d]">{url}</p>
         <Button variant="primary" onClick={onClose}>關閉</Button>
       </div>
-    </div>
+    </Dialog>
   );
 }
 
@@ -117,7 +117,7 @@ function WallCardView({
       )}
       <button
         onClick={onFocus}
-        className="block w-full cursor-zoom-in text-left"
+        className="block min-h-11 w-full cursor-zoom-in text-left"
         aria-label={`放大檢視第 ${index + 1} 張卡片`}
       >
         {card.kind === "image" ? (
@@ -135,14 +135,14 @@ function WallCardView({
         </figcaption>
       )}
       {!present && (
-        <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-          <IconButton label={card.starred ? "取消加星" : "加星"} className="!size-8 !bg-white/90" onClick={onStar}>
+        <div className="absolute right-2 top-2 flex gap-2 opacity-100 transition-opacity md:opacity-0 md:focus-within:opacity-100 md:group-hover:opacity-100">
+          <IconButton label={card.starred ? "取消加星" : "加星"} className="!bg-white/95" onClick={onStar}>
             <Star className={`size-4 ${card.starred ? "fill-[var(--star)] text-[var(--star)]" : ""}`} />
           </IconButton>
-          <IconButton label={card.hidden ? "顯示卡片" : "隱藏卡片"} className="!size-8 !bg-white/90" onClick={onHide}>
+          <IconButton label={card.hidden ? "顯示卡片" : "隱藏卡片"} className="!bg-white/95" onClick={onHide}>
             {card.hidden ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
           </IconButton>
-          <IconButton label="刪除卡片" className="!size-8 !bg-white/90" onClick={onDelete}>
+          <IconButton label="刪除卡片" className="!bg-white/95" onClick={onDelete}>
             <Trash2 className="size-4 text-danger" />
           </IconButton>
         </div>
@@ -168,6 +168,9 @@ function WallEditorInner() {
 
   const [batchOpen, setBatchOpen] = useState(false);
   const [batchText, setBatchText] = useState("");
+  const [cardOpen, setCardOpen] = useState(false);
+  const [cardContent, setCardContent] = useState("");
+  const [cardAuthor, setCardAuthor] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const csvRef = useRef<HTMLInputElement>(null);
@@ -197,12 +200,18 @@ function WallEditorInner() {
   const focused = focusIndex !== null ? visibleCards[focusIndex] : null;
 
   function addTextCard() {
-    const content = prompt("卡片內容？");
-    if (!content?.trim()) return;
-    const author = prompt("作者（可留空）？") ?? "";
+    setCardOpen(true);
+  }
+
+  function submitTextCard() {
+    const content = cardContent.trim();
+    if (!content) return;
     mutate((w) => ({
-      cards: [...w.cards, { id: nanoid(8), kind: "text", content: content.trim(), author: author.trim() || undefined }],
+      cards: [...w.cards, { id: nanoid(8), kind: "text", content, author: cardAuthor.trim() || undefined }],
     }));
+    setCardContent("");
+    setCardAuthor("");
+    setCardOpen(false);
   }
 
   function importBatch() {
@@ -263,9 +272,9 @@ function WallEditorInner() {
   return (
     <div className="flex min-h-dvh flex-col bg-bg">
       {/* ===== 頂欄 ===== */}
-      <header className="sticky top-0 z-40 flex min-h-14 flex-wrap items-center justify-between gap-2 border-b border-border bg-surface px-3 py-2">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Link href="/walls" aria-label="回成果牆列表" className="flex size-10 shrink-0 items-center justify-center rounded-md hover:bg-hover">
+      <header className="sticky top-0 z-40 flex min-h-14 flex-wrap items-stretch justify-between gap-2 border-b border-border bg-surface px-3 py-2 sm:items-center">
+        <div className="flex w-full min-w-0 flex-1 items-center gap-2 sm:w-auto">
+          <Link href="/walls" aria-label="回成果牆列表" className="flex size-11 shrink-0 items-center justify-center rounded-md hover:bg-hover">
             <Home className="size-5" />
           </Link>
           {present ? (
@@ -279,19 +288,19 @@ function WallEditorInner() {
                 value={wall.title}
                 onChange={(e) => mutate(() => ({ title: e.target.value }))}
                 aria-label="成果牆標題"
-                className="h-9 w-full max-w-md rounded-md bg-transparent px-2 text-lg font-bold hover:bg-hover focus:bg-surface-raised"
+                className="h-11 w-full max-w-md rounded-md bg-transparent px-2 text-lg font-bold hover:bg-hover focus:bg-surface-raised"
               />
               <input
                 value={wall.prompt ?? ""}
                 onChange={(e) => mutate(() => ({ prompt: e.target.value }))}
                 placeholder="題目／給學生的說明（投影時顯示）"
                 aria-label="題目說明"
-                className="h-8 w-full max-w-md rounded-md bg-transparent px-2 text-sm text-text-muted placeholder:text-text-faint hover:bg-hover focus:bg-surface-raised"
+                className="h-11 w-full max-w-md rounded-md bg-transparent px-2 text-base text-text-muted placeholder:text-text-muted hover:bg-hover focus:bg-surface-raised sm:text-sm"
               />
             </div>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex w-full items-center gap-1.5 overflow-x-auto pb-1 sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0">
           {/* 佈局切換 */}
           <div role="radiogroup" aria-label="佈局" className="flex items-center gap-1">
             {LAYOUTS.map(({ value, label, icon: Icon }) => (
@@ -353,14 +362,14 @@ function WallEditorInner() {
             <ImageIcon className="size-4" aria-hidden />
             加入圖片
           </Button>
-          <div className="ml-auto flex items-center gap-2">
-            <label className="flex items-center gap-2 text-sm text-text-muted">
+          <div className="ml-auto flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <label className="flex min-w-0 flex-col gap-1.5 text-sm text-text-muted sm:flex-row sm:items-center sm:gap-2">
               投稿入口網址
               <input
                 value={wall.submitUrl ?? ""}
                 onChange={(e) => mutate(() => ({ submitUrl: e.target.value || undefined }))}
                 placeholder="Google 表單／Padlet 連結"
-                className="h-9 w-56 rounded-sm border border-border bg-surface-raised px-2 text-sm placeholder:text-text-faint"
+                className="h-11 min-w-0 w-full rounded-sm border border-control bg-surface-raised px-3 text-base placeholder:text-text-muted sm:w-56 sm:text-sm"
               />
             </label>
             {wall.submitUrl && (
@@ -408,9 +417,8 @@ function WallEditorInner() {
 
       {/* ===== 聚光揭示 ===== */}
       {focused && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center p-6" role="dialog" aria-modal aria-label="聚光檢視">
-          <div className="absolute inset-0 bg-black/80" onClick={() => setFocusIndex(null)} aria-hidden />
-          <div className="relative flex max-h-[85dvh] w-full max-w-3xl flex-col gap-4 overflow-y-auto rounded-2xl bg-white p-10">
+        <Dialog title="聚光檢視" onClose={() => setFocusIndex(null)} maxWidth="max-w-3xl" panelClassName="bg-white p-6 text-[#1c1c1c] md:p-10" scrimClassName="bg-black/80">
+          <div className="flex flex-col gap-4">
             {focused.kind === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={focused.content} alt={focused.author ? `${focused.author} 的作品` : "作品"} className="w-full rounded-lg" />
@@ -423,7 +431,7 @@ function WallEditorInner() {
               <p className="text-xl font-medium text-[#5f5f5d]">— {focused.author}</p>
             )}
           </div>
-          <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-3">
+          <div className="mt-6 flex items-center justify-center gap-3">
             <IconButton label="上一張" disabled={focusIndex === 0}
               onClick={() => setFocusIndex((i) => Math.max(0, (i ?? 0) - 1))}>
               <ChevronLeft className="size-5" />
@@ -439,27 +447,25 @@ function WallEditorInner() {
               <X className="size-5" />
             </IconButton>
           </div>
-        </div>
+        </Dialog>
       )}
 
       {/* ===== 批次貼上對話框 ===== */}
       {batchOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal aria-label="批次貼上">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setBatchOpen(false)} aria-hidden />
+        <Dialog title="批次貼上" description="每行建立一張卡片；輸入「姓名：內容」會自動拆出作者。" onClose={() => setBatchOpen(false)} maxWidth="max-w-lg">
           <form
-            className="relative flex w-full max-w-lg flex-col gap-4 rounded-xl border border-border bg-surface-raised p-6"
+            className="flex flex-col gap-4"
             onSubmit={(e) => { e.preventDefault(); importBatch(); }}
           >
-            <h2 className="text-lg font-bold">批次貼上</h2>
             <label className="flex flex-col gap-1.5 text-sm font-medium">
-              每行一張卡片；「姓名：內容」會自動拆出作者
+              學生成果文字
               <textarea
                 autoFocus
                 rows={10}
                 value={batchText}
                 onChange={(e) => setBatchText(e.target.value)}
                 placeholder={"小明：我覺得主角很勇敢\n小華：結局出乎意料\n沒有署名的想法也可以"}
-                className="rounded-sm border border-border bg-surface px-3 py-2 text-sm leading-relaxed placeholder:text-text-faint"
+                className="rounded-sm border border-control bg-surface px-3 py-2 text-base leading-relaxed placeholder:text-text-muted sm:text-sm"
               />
             </label>
             <div className="flex justify-end gap-2">
@@ -467,7 +473,39 @@ function WallEditorInner() {
               <Button variant="primary" type="submit" disabled={!batchText.trim()}>加入卡片</Button>
             </div>
           </form>
-        </div>
+        </Dialog>
+      )}
+
+      {cardOpen && (
+        <Dialog title="新增成果卡片" description="內容為必填；作者可留空，適合匿名回饋。" onClose={() => setCardOpen(false)} maxWidth="max-w-lg">
+          <form className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); submitTextCard(); }}>
+            <label className="flex flex-col gap-1.5 text-sm font-medium">
+              卡片內容 <span className="text-danger">*</span>
+              <textarea
+                autoFocus
+                required
+                rows={5}
+                value={cardContent}
+                onChange={(e) => setCardContent(e.target.value)}
+                placeholder="輸入學生的答案、作品說明或想法"
+                className="rounded-sm border border-control bg-surface px-3 py-2 text-base leading-relaxed placeholder:text-text-muted"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm font-medium">
+              作者（可留空）
+              <input
+                value={cardAuthor}
+                onChange={(e) => setCardAuthor(e.target.value)}
+                placeholder="姓名或組別"
+                className="h-11 rounded-sm border border-control bg-surface px-3 text-base placeholder:text-text-muted"
+              />
+            </label>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" type="button" onClick={() => setCardOpen(false)}>取消</Button>
+              <Button variant="primary" type="submit" disabled={!cardContent.trim()}>加入卡片</Button>
+            </div>
+          </form>
+        </Dialog>
       )}
 
       {qrOpen && wall.submitUrl && (

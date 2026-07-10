@@ -19,6 +19,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { useCollection, useHydrated } from "@/lib/hooks";
 import { createItem, deleteItem, updateItem } from "@/lib/storage";
 import type { Roster, Student } from "@/lib/types";
+import { Dialog } from "@/components/ui/Dialog";
 
 /* ---------- CSV 匯入：欄位「座號,姓名,標籤」（表頭可有可無）---------- */
 
@@ -52,16 +53,28 @@ function parseStudentsCsv(text: string): Student[] {
 function RosterCard({ roster }: { roster: Roster }) {
   const [editing, setEditing] = useState(false);
   const [nameDraft, setNameDraft] = useState(roster.name);
-  const [newStudent, setNewStudent] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [newTags, setNewTags] = useState("");
   const csvRef = useRef<HTMLInputElement>(null);
 
   function addStudent() {
-    const name = newStudent.trim();
+    const name = newName.trim();
     if (!name) return;
     updateItem("rosters", roster.id, {
-      students: [...roster.students, { id: nanoid(8), name }],
+      students: [
+        ...roster.students,
+        {
+          id: nanoid(8),
+          name,
+          number: newNumber.trim() || undefined,
+          tags: newTags.trim() ? newTags.split(/[;；、,\s]+/).filter(Boolean) : undefined,
+        },
+      ],
     });
-    setNewStudent("");
+    setNewName("");
+    setNewNumber("");
+    setNewTags("");
   }
 
   function removeStudent(sid: string) {
@@ -101,7 +114,7 @@ function RosterCard({ roster }: { roster: Roster }) {
               value={nameDraft}
               onChange={(e) => setNameDraft(e.target.value)}
               aria-label="班級名稱"
-              className="h-10 flex-1 rounded-sm border border-border bg-surface-raised px-3 text-base"
+              className="h-11 flex-1 rounded-sm border border-control bg-surface-raised px-3 text-base"
             />
             <IconButton label="儲存班級名稱" type="submit">
               <Check className="size-4.5" />
@@ -152,7 +165,7 @@ function RosterCard({ roster }: { roster: Roster }) {
               <button
                 aria-label={`移除 ${s.name}`}
                 onClick={() => removeStudent(s.id)}
-                className="flex size-6 cursor-pointer items-center justify-center rounded-full text-text-faint hover:bg-hover hover:text-danger"
+                className="flex size-11 cursor-pointer items-center justify-center rounded-full text-text-muted hover:bg-hover hover:text-danger"
               >
                 <X className="size-3.5" />
               </button>
@@ -166,24 +179,47 @@ function RosterCard({ roster }: { roster: Roster }) {
       )}
 
       {/* 新增學生 + CSV 匯入 */}
-      <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+      <div className="flex flex-col gap-3 border-t border-border pt-4">
+        <p className="text-sm font-semibold">新增學生</p>
         <form
-          className="flex min-w-0 flex-1 items-center gap-2"
+          className="grid min-w-0 gap-3 sm:grid-cols-[7rem_minmax(10rem,1fr)_minmax(10rem,1fr)_auto] sm:items-end"
           onSubmit={(e) => { e.preventDefault(); addStudent(); }}
         >
-          <input
-            value={newStudent}
-            onChange={(e) => setNewStudent(e.target.value)}
-            placeholder="輸入姓名後按 Enter"
-            aria-label="新增學生姓名"
-            className="h-10 min-w-0 flex-1 rounded-sm border border-border bg-surface-raised px-3 text-sm placeholder:text-text-faint"
-          />
+          <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+            座號（選填）
+            <input
+              inputMode="numeric"
+              value={newNumber}
+              onChange={(e) => setNewNumber(e.target.value)}
+              placeholder="01"
+              className="h-11 min-w-0 rounded-sm border border-control bg-surface-raised px-3 text-base placeholder:text-text-muted"
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+            姓名 <span className="text-danger">*</span>
+            <input
+              required
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="王小明"
+              className="h-11 min-w-0 rounded-sm border border-control bg-surface-raised px-3 text-base placeholder:text-text-muted"
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-medium text-text-muted">
+            標籤（選填）
+            <input
+              value={newTags}
+              onChange={(e) => setNewTags(e.target.value)}
+              placeholder="第一組、組長"
+              className="h-11 min-w-0 rounded-sm border border-control bg-surface-raised px-3 text-base placeholder:text-text-muted"
+            />
+          </label>
           <Button variant="surface" size="sm" type="submit">
             <UserPlus className="size-4" aria-hidden />
             新增
           </Button>
         </form>
-        <Button variant="ghost" size="sm" onClick={() => csvRef.current?.click()}>
+        <Button className="w-fit" variant="ghost" size="sm" onClick={() => csvRef.current?.click()}>
           <Upload className="size-4" aria-hidden />
           匯入 CSV
         </Button>
@@ -208,19 +244,24 @@ function RosterCard({ roster }: { roster: Roster }) {
 export function RostersView() {
   const rosters = useCollection("rosters");
   const hydrated = useHydrated();
+  const [createOpen, setCreateOpen] = useState(false);
+  const [className, setClassName] = useState("");
 
   function createRoster() {
-    const name = prompt("班級名稱？", `新班級 ${rosters.length + 1}`);
-    if (name?.trim()) createItem("rosters", { name: name.trim(), students: [] });
+    const name = className.trim();
+    if (!name) return;
+    createItem("rosters", { name, students: [] });
+    setClassName("");
+    setCreateOpen(false);
   }
 
   return (
     <>
       <PageHeader
         title="學生名單"
-        desc="班級與學生建檔、CSV 匯入（格式：座號,姓名,標籤）。名單供黑板與成果牆使用。"
+        desc="集中管理班級與學生資料，支援座號、姓名、標籤及 CSV 匯入。"
         actions={
-          <Button variant="primary" onClick={createRoster}>
+          <Button variant="primary" onClick={() => setCreateOpen(true)}>
             <Plus className="size-4.5" aria-hidden />
             新增班級
           </Button>
@@ -232,7 +273,7 @@ export function RostersView() {
           title="還沒有任何班級"
           hint="建立第一個班級後，就能逐一輸入學生或整批匯入 CSV。"
           action={
-            <Button variant="primary" onClick={createRoster}>
+            <Button variant="primary" onClick={() => setCreateOpen(true)}>
               <Plus className="size-4.5" aria-hidden />
               新增班級
             </Button>
@@ -244,6 +285,27 @@ export function RostersView() {
             <RosterCard key={r.id} roster={r} />
           ))}
         </div>
+      )}
+      {createOpen && (
+        <Dialog title="新增班級" description="先建立班級，再逐一新增學生或匯入 CSV。" onClose={() => setCreateOpen(false)} maxWidth="max-w-md">
+          <form className="flex flex-col gap-4" onSubmit={(e) => { e.preventDefault(); createRoster(); }}>
+            <label className="flex flex-col gap-1.5 text-sm font-medium">
+              班級名稱 <span className="text-danger">*</span>
+              <input
+                autoFocus
+                required
+                value={className}
+                onChange={(e) => setClassName(e.target.value)}
+                placeholder={`例：七年一班`}
+                className="h-11 rounded-sm border border-control bg-surface px-3 text-base placeholder:text-text-muted"
+              />
+            </label>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="ghost" onClick={() => setCreateOpen(false)}>取消</Button>
+              <Button type="submit" variant="primary" disabled={!className.trim()}>建立班級</Button>
+            </div>
+          </form>
+        </Dialog>
       )}
     </>
   );

@@ -31,7 +31,7 @@ export function GamePlayer() {
     <div className="flex h-dvh flex-col overflow-hidden bg-bg">
       <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3">
         <div className="flex min-w-0 items-center gap-2">
-          <Link href="/games" aria-label="回遊戲列表" className="flex size-10 items-center justify-center rounded-md hover:bg-hover">
+          <Link href="/games" aria-label="回遊戲列表" className="flex size-11 items-center justify-center rounded-md hover:bg-hover">
             <Home className="size-5" />
           </Link>
           <Gamepad2 className="size-5 shrink-0 text-game" aria-hidden />

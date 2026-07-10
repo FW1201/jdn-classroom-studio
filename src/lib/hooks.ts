@@ -53,9 +53,11 @@ export function useSettings(): Settings {
 
 /** localStorage 資料只在 client 存在——用來 gate「載入中/空狀態」誤判 */
 export function useHydrated(): boolean {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
-  return hydrated;
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 }
 
 /** debounce 寫入（黑板高頻編輯用） */

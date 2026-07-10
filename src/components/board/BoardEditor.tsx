@@ -9,7 +9,7 @@
    - 多頁 + 投影模式（?present=1）
    ============================================================ */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Rnd } from "react-rnd";
@@ -51,6 +51,7 @@ import { useItem } from "@/lib/hooks";
 import { getItem, updateItem } from "@/lib/storage";
 import { IconButton, Button } from "@/components/ui/Button";
 import { WidgetContent, createWidget, nextZ, syncZCounter } from "./widgets";
+import { Dialog } from "@/components/ui/Dialog";
 
 /* ---------- 筆跡 → SVG path ---------- */
 
@@ -93,36 +94,38 @@ function InputDialog({
 }) {
   const [values, setValues] = useState<Record<string, string>>({});
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal aria-label={title}>
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+    <Dialog title={title} onClose={onClose} maxWidth="max-w-lg">
       <form
-        className="relative flex w-full max-w-lg flex-col gap-4 rounded-xl border border-border bg-surface-raised p-6"
+        className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit(values);
           onClose();
         }}
       >
-        <h2 className="text-lg font-bold">{title}</h2>
-        {fields.map((f) => (
+        {fields.map((f, index) => (
           <label key={f.key} className="flex flex-col gap-1.5 text-sm font-medium">
-            {f.label}
+            <span>{f.label}{index === 0 && <span className="text-danger"> *</span>}</span>
             {multiline === f.key ? (
               <textarea
                 autoFocus={fields[0].key === f.key}
+                required={index === 0}
+                aria-required={index === 0}
                 rows={8}
                 value={values[f.key] ?? ""}
                 onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
                 placeholder={f.placeholder}
-                className="rounded-sm border border-border bg-surface px-3 py-2 font-mono text-xs leading-relaxed placeholder:text-text-faint"
+                className="rounded-sm border border-control bg-surface px-3 py-2 font-mono text-base leading-relaxed placeholder:text-text-muted sm:text-sm"
               />
             ) : (
               <input
                 autoFocus={fields[0].key === f.key}
+                required={index === 0}
+                aria-required={index === 0}
                 value={values[f.key] ?? ""}
                 onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
                 placeholder={f.placeholder}
-                className="h-11 rounded-sm border border-border bg-surface px-3 text-base placeholder:text-text-faint"
+                className="h-11 rounded-sm border border-control bg-surface px-3 text-base placeholder:text-text-muted"
               />
             )}
           </label>
@@ -132,7 +135,7 @@ function InputDialog({
           <Button variant="primary" type="submit">建立</Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   );
 }
 
@@ -347,7 +350,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
       {/* ===== 頂欄 ===== */}
       <header data-ui className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3">
         <div className="flex min-w-0 items-center gap-2">
-          <Link href="/boards" aria-label="回黑板列表" className="flex size-10 items-center justify-center rounded-md hover:bg-hover">
+          <Link href="/boards" aria-label="回黑板列表" className="flex size-11 items-center justify-center rounded-md hover:bg-hover">
             <Home className="size-5" />
           </Link>
           {present ? (
@@ -357,7 +360,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
               value={board.title}
               onChange={(e) => updateItem("boards", board.id, { title: e.target.value })}
               aria-label="黑板標題"
-              className="h-10 w-48 rounded-md bg-transparent px-2 text-lg font-bold hover:bg-hover focus:bg-surface-raised md:w-72"
+              className="h-11 w-44 rounded-md bg-transparent px-2 text-lg font-bold hover:bg-hover focus:bg-surface-raised sm:w-48 md:w-72"
             />
           )}
         </div>
@@ -437,6 +440,29 @@ export function BoardEditor({ boardId }: { boardId: string }) {
                   })
                 }
                 onPointerDown={() => { if (!present && !drawingMode) setSelectedId(w.id); }}
+                onFocus={() => { if (!present && !drawingMode) setSelectedId(w.id); }}
+                tabIndex={present ? -1 : 0}
+                role="group"
+                aria-label={`${w.type === "text" ? "文字" : w.type === "sticky" ? "便利貼" : w.type === "image" ? "圖片" : w.type === "video" ? "影片" : w.type === "link" ? "超連結" : w.type === "qr" ? "QR 碼" : "嵌入內容"}物件。方向鍵移動，Alt 加方向鍵調整大小。`}
+                onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
+                  const target = event.target as HTMLElement;
+                  if (target.matches("input, textarea, select, button, a")) return;
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setSelectedId(w.id);
+                    return;
+                  }
+                  if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+                  event.preventDefault();
+                  const step = event.shiftKey ? 10 : 2;
+                  const dx = event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
+                  const dy = event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
+                  if (event.altKey) {
+                    patchWidget(w.id, { w: Math.max(80, w.w + dx), h: Math.max(56, w.h + dy) });
+                  } else {
+                    patchWidget(w.id, { x: w.x + dx, y: w.y + dy });
+                  }
+                }}
                 className={`group ${selectedId === w.id && !present ? "outline-2 outline-dashed outline-border-strong" : ""}`}
               >
                 <div className="size-full rounded-md border border-border bg-surface-raised/90">
@@ -501,28 +527,28 @@ export function BoardEditor({ boardId }: { boardId: string }) {
         >
           {selected.type === "text" && (
             <>
-              <IconButton label="放大字級" className="!size-9" onClick={() => patchWidget(selected.id, { props: { ...selected.props, fontSize: Math.min(200, (Number(selected.props.fontSize) || 40) + 6) } })}>
+              <IconButton label="放大字級" onClick={() => patchWidget(selected.id, { props: { ...selected.props, fontSize: Math.min(200, (Number(selected.props.fontSize) || 40) + 6) } })}>
                 <AArrowUp className="size-4" />
               </IconButton>
-              <IconButton label="縮小字級" className="!size-9" onClick={() => patchWidget(selected.id, { props: { ...selected.props, fontSize: Math.max(14, (Number(selected.props.fontSize) || 40) - 6) } })}>
+              <IconButton label="縮小字級" onClick={() => patchWidget(selected.id, { props: { ...selected.props, fontSize: Math.max(14, (Number(selected.props.fontSize) || 40) - 6) } })}>
                 <AArrowDown className="size-4" />
               </IconButton>
             </>
           )}
-          <IconButton label="移到最上層" className="!size-9" onClick={() => patchWidget(selected.id, { z: nextZ() })}>
+          <IconButton label="移到最上層" onClick={() => patchWidget(selected.id, { z: nextZ() })}>
             <ArrowUpToLine className="size-4" />
           </IconButton>
-          <IconButton label="移到最下層" className="!size-9" onClick={() => {
+          <IconButton label="移到最下層" onClick={() => {
             if (!page) return;
             const minZ = Math.min(...page.widgets.map((x) => x.z));
             patchWidget(selected.id, { z: minZ - 1 });
           }}>
             <ArrowDownToLine className="size-4" />
           </IconButton>
-          <IconButton label={selected.locked ? "解除鎖定" : "鎖定位置"} className="!size-9" onClick={() => patchWidget(selected.id, { locked: !selected.locked })}>
+          <IconButton label={selected.locked ? "解除鎖定" : "鎖定位置"} onClick={() => patchWidget(selected.id, { locked: !selected.locked })}>
             {selected.locked ? <Unlock className="size-4" /> : <Lock className="size-4" />}
           </IconButton>
-          <IconButton label="刪除物件" className="!size-9" onClick={() => {
+          <IconButton label="刪除物件" onClick={() => {
             mutatePage((p) => ({ widgets: p.widgets.filter((x) => x.id !== selected.id) }));
             setSelectedId(null);
           }}>
@@ -555,7 +581,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
                   aria-label={`筆色 ${c}`}
                   aria-pressed={penColor === c}
                   onClick={() => setPenColor(c)}
-                  className={`size-7 cursor-pointer rounded-full border-2 ${penColor === c ? "border-border-strong scale-110" : "border-border"}`}
+                  className={`size-11 cursor-pointer rounded-full border-4 transition-transform duration-200 active:scale-95 ${penColor === c ? "border-border-strong scale-105" : "border-bg"}`}
                   style={{ background: c }}
                 />
               ))}

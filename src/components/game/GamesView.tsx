@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { Gamepad2, Plus, Trash2, Play, Pencil, ShieldCheck } from "lucide-react";
 import { Card, EmptyState, Tag } from "@/components/ui/Card";
 import { Button, IconButton } from "@/components/ui/Button";
@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { useCollection, useHydrated } from "@/lib/hooks";
 import { createItem, deleteItem, updateItem, StorageQuotaError } from "@/lib/storage";
 import type { Game } from "@/lib/types";
+import { Dialog } from "@/components/ui/Dialog";
 
 /* ---------- 建檔 / 編輯對話框 ---------- */
 
@@ -49,13 +50,15 @@ function GameDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal aria-label={game ? "編輯遊戲" : "新增遊戲"}>
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden />
+    <Dialog
+      title={game ? "編輯遊戲" : "新增遊戲"}
+      description="貼上完整 HTML 後，程式會在隔離沙箱中執行。建議先用一題小範例確認按鈕與字級適合投影。"
+      onClose={onClose}
+    >
       <form
-        className="relative flex max-h-[90dvh] w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-xl border border-border bg-surface-raised p-6"
+        className="flex flex-col gap-4"
         onSubmit={(e) => { e.preventDefault(); save(); }}
       >
-        <h2 className="text-xl font-bold">{game ? "編輯遊戲" : "新增遊戲"}</h2>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           遊戲名稱
           <input
@@ -63,7 +66,7 @@ function GameDialog({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="例：分數大挑戰"
-            className="h-11 rounded-sm border border-border bg-surface px-3 text-base placeholder:text-text-faint"
+            className="h-11 rounded-sm border border-control bg-surface px-3 text-base placeholder:text-text-muted"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
@@ -73,7 +76,7 @@ function GameDialog({
             onChange={(e) => setHtml(e.target.value)}
             rows={12}
             placeholder={"貼上 AI 生成的完整 HTML（<!DOCTYPE html>…），或外部 <iframe> 嵌入碼"}
-            className="rounded-sm border border-border bg-surface px-3 py-2 font-mono text-xs leading-relaxed placeholder:text-text-faint"
+            className="rounded-sm border border-control bg-surface px-3 py-2 font-mono text-base leading-relaxed placeholder:text-text-muted sm:text-sm"
           />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
@@ -82,10 +85,10 @@ function GameDialog({
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="數學、五年級"
-            className="h-11 rounded-sm border border-border bg-surface px-3 text-base placeholder:text-text-faint"
+            className="h-11 rounded-sm border border-control bg-surface px-3 text-base placeholder:text-text-muted"
           />
         </label>
-        <p className="flex items-start gap-2 rounded-md border border-border bg-surface p-3 text-xs leading-relaxed text-text-muted">
+        <p className="flex items-start gap-2 rounded-md border border-control bg-surface p-3 text-sm leading-relaxed text-text-muted">
           <ShieldCheck className="mt-0.5 size-4 shrink-0 text-game" aria-hidden />
           遊戲在隔離沙箱中執行：程式碼無法讀取本站資料（名單、黑板）或你的瀏覽器 cookie。
         </p>
@@ -96,7 +99,7 @@ function GameDialog({
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   );
 }
 
@@ -107,12 +110,9 @@ function GamesList() {
   const hydrated = useHydrated();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dialog, setDialog] = useState<"new" | Game | null>(null);
-
-  // Hub 的「新增遊戲」快速入口（/games?new=1）
-  useEffect(() => {
-    if (searchParams.get("new") === "1") setDialog("new");
-  }, [searchParams]);
+  const [dialog, setDialog] = useState<"new" | Game | null>(() =>
+    searchParams.get("new") === "1" ? "new" : null
+  );
 
   return (
     <>
@@ -146,7 +146,7 @@ function GamesList() {
                 <span className="flex size-11 items-center justify-center rounded-lg border border-border bg-surface-raised text-game" aria-hidden>
                   <Gamepad2 className="size-5.5" />
                 </span>
-                <span className="text-xs tabular-nums text-text-faint">
+                <span className="text-xs tabular-nums text-text-muted">
                   {(g.html.length / 1024).toFixed(0)} KB
                 </span>
               </div>

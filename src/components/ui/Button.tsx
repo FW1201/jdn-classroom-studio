@@ -11,12 +11,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const base =
-  "inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-[opacity,background-color,border-color,box-shadow] duration-200 select-none disabled:cursor-not-allowed disabled:opacity-40 active:opacity-80";
+  "inline-flex cursor-pointer touch-manipulation items-center justify-center gap-2 font-medium transition-[opacity,transform,background-color,border-color,box-shadow] duration-200 select-none disabled:cursor-not-allowed disabled:opacity-40 active:scale-[0.98]";
 
 const variants: Record<Variant, string> = {
   // Lovable 標誌性深色按鈕（inset shadow）
   primary:
-    "bg-text text-on-dark rounded-sm [box-shadow:var(--shadow-inset)] hover:opacity-90 focus-visible:[box-shadow:var(--shadow-focus)]",
+    "bg-text text-on-dark rounded-sm [box-shadow:var(--shadow-inset)] hover:-translate-y-0.5 hover:[box-shadow:var(--shadow-raised)]",
   ghost:
     "bg-transparent text-text rounded-sm border border-border-strong hover:bg-hover",
   surface: "bg-surface text-text rounded-sm border border-border hover:bg-hover",
@@ -26,7 +26,7 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm",
+  sm: "h-11 px-3 text-sm",
   md: "h-11 px-4 text-base", // ≥44px 觸控目標
   lg: "h-12 px-6 text-lg",
 };
@@ -54,7 +54,7 @@ export const IconButton = forwardRef<
       aria-label={label}
       title={label}
       aria-pressed={active}
-      className={`inline-flex size-11 cursor-pointer items-center justify-center rounded-full border transition-colors duration-200 active:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 ${
+      className={`inline-flex size-11 cursor-pointer touch-manipulation items-center justify-center rounded-full border transition-[transform,background-color,border-color,opacity] duration-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 ${
         active
           ? "border-border-strong bg-text text-on-dark [box-shadow:var(--shadow-inset)]"
           : "border-border bg-surface-raised text-text hover:bg-hover"

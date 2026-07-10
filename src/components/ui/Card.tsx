@@ -7,7 +7,7 @@ export function Card({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`rounded-lg border border-border bg-surface ${className}`}
+      className={`rounded-lg border border-border bg-surface-raised [box-shadow:var(--shadow-card)] ${className}`}
       {...rest}
     />
   );

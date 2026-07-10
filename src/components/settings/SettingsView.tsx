@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { Download, Upload, Trash2, Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +15,9 @@ import {
   subscribe,
   validateBundle,
 } from "@/lib/storage";
+import type { ExportBundle } from "@/lib/types";
+import { Dialog } from "@/components/ui/Dialog";
+import { JdnBrandLinks } from "@/components/brand/JdnBrandLinks";
 
 const LIMIT = 5 * 1024 * 1024;
 
@@ -32,6 +35,8 @@ export function SettingsView() {
   const settings = useSettings();
   const usage = useUsage();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [pendingImport, setPendingImport] = useState<ExportBundle | null>(null);
+  const [notice, setNotice] = useState("");
   const ratio = Math.min(usage / LIMIT, 1);
   const mb = (usage / 1024 / 1024).toFixed(2);
 
@@ -40,23 +45,32 @@ export function SettingsView() {
       try {
         const data = JSON.parse(text);
         if (!validateBundle(data)) {
-          alert("檔案格式不符：請選擇由本站匯出的 JSON 備份。");
+          setNotice("檔案格式不符：請選擇由本站匯出的 JSON 備份。");
           return;
         }
-        const replace = confirm(
-          "要「覆蓋」現有資料嗎？\n\n確定＝覆蓋（以備份為準）\n取消＝合併（保留現有，加入備份中的新項目）"
-        );
-        importAll(data, replace ? "replace" : "merge");
-        alert("匯入完成。");
+        setPendingImport(data);
       } catch {
-        alert("無法讀取檔案：請確認是有效的 JSON 備份。");
+        setNotice("無法讀取檔案：請確認是有效的 JSON 備份。");
       }
     });
+  }
+
+  function completeImport(mode: "merge" | "replace") {
+    if (!pendingImport) return;
+    importAll(pendingImport, mode);
+    setPendingImport(null);
+    setNotice(mode === "replace" ? "匯入完成：目前資料已由備份覆蓋。" : "匯入完成：備份已合併到目前資料。" );
   }
 
   return (
     <>
       <PageHeader title="設定" desc="主題、資料容量、備份與清除。" />
+      <p className="sr-only" aria-live="polite">{notice}</p>
+      {notice && (
+        <div className="mb-4 rounded-md border border-control bg-surface-raised px-4 py-3 text-sm" role="status">
+          {notice}
+        </div>
+      )}
       <div className="flex flex-col gap-4">
         {/* 主題 */}
         <Card className="flex flex-col gap-4 p-5">
@@ -78,6 +92,16 @@ export function SettingsView() {
           <p className="text-sm text-text-muted">
             投影建議：明亮教室用淺色，暗房投影用深色。
           </p>
+        </Card>
+
+        <Card className="flex flex-col gap-4 p-5">
+          <div>
+            <h2 className="text-lg font-bold">關於與社群</h2>
+            <p className="mt-1 text-sm leading-relaxed text-text-muted">
+              本工具由數位敘事力期刊 Journal of Digital Narrative 出品，持續分享 AI × 教育工具、教學案例與數位敘事實作。
+            </p>
+          </div>
+          <JdnBrandLinks />
         </Card>
 
         {/* 容量 */}
@@ -114,7 +138,7 @@ export function SettingsView() {
         </Card>
 
         {/* 備份 */}
-        <Card className="flex flex-col gap-4 p-5">
+        <Card id="backup" className="scroll-mt-6 flex flex-col gap-4 p-5">
           <h2 className="text-lg font-bold">備份與還原</h2>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary" onClick={() => downloadExport()}>
@@ -161,6 +185,29 @@ export function SettingsView() {
           </div>
         </Card>
       </div>
+      {pendingImport && (
+        <Dialog title="選擇匯入方式" description="請確認要保留目前資料，或完全以備份內容取代。" onClose={() => setPendingImport(null)} maxWidth="max-w-lg">
+          <div className="grid gap-3">
+            <button
+              type="button"
+              onClick={() => completeImport("merge")}
+              className="min-h-16 rounded-lg border border-control bg-surface p-4 text-left transition-colors hover:bg-hover"
+            >
+              <span className="block font-semibold">合併資料（建議）</span>
+              <span className="mt-1 block text-sm text-text-muted">保留目前內容，只加入備份中尚未出現的項目。</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => completeImport("replace")}
+              className="min-h-16 rounded-lg border border-danger/50 bg-surface p-4 text-left transition-colors hover:bg-hover"
+            >
+              <span className="block font-semibold text-danger">覆蓋目前資料</span>
+              <span className="mt-1 block text-sm text-text-muted">完全以備份為準；目前未包含在備份內的資料會消失。</span>
+            </button>
+            <Button type="button" variant="ghost" onClick={() => setPendingImport(null)}>取消匯入</Button>
+          </div>
+        </Dialog>
+      )}
     </>
   );
 }

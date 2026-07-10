@@ -15,9 +15,10 @@
   --text: #1c1c1c;           /* 主文字：炭黑，帶暖度 */
   --text-strong: rgba(28, 28, 28, 0.92);
   --text-muted: #5f5f5d;     /* 次要文字 / 說明 */
-  --text-faint: rgba(28, 28, 28, 0.4);
+  --text-faint: #6b6964;
   --border: #eceae4;         /* 被動邊線 / 分隔 */
   --border-strong: rgba(28, 28, 28, 0.4); /* 互動邊線 */
+  --control-border: #8a8882; /* 表單／按鈕邊界，與背景至少 3:1 的視覺分離 */
   --hover: rgba(28, 28, 28, 0.04);
   --tint: rgba(28, 28, 28, 0.03);
   --on-dark: #fcfbf8;        /* 深色按鈕上的文字 */
@@ -43,6 +44,8 @@
     rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset,
     rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
   --shadow-focus: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  --shadow-card: 0 1px 2px rgba(28, 28, 28, 0.04), 0 10px 28px rgba(28, 28, 28, 0.04);
+  --shadow-raised: 0 8px 20px rgba(28, 28, 28, 0.09);
 
   color-scheme: light;
 }
@@ -55,9 +58,10 @@
   --text: #f4f1ea;
   --text-strong: rgba(244, 241, 234, 0.96);
   --text-muted: #a8a49a;
-  --text-faint: rgba(244, 241, 234, 0.45);
+  --text-faint: #aaa69c;
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.28);
+  --control-border: #77736c;
   --hover: rgba(255, 255, 255, 0.06);
   --tint: rgba(255, 255, 255, 0.04);
   --on-dark: #1c1c1c; /* 深色模式下主按鈕底色為亮色，文字翻轉為深 */
@@ -74,6 +78,8 @@
     rgba(0, 0, 0, 0.5) 0px 0px 0px 0.5px inset,
     rgba(0, 0, 0, 0.3) 0px 1px 2px 0px;
   --shadow-focus: rgba(0, 0, 0, 0.4) 0px 4px 14px;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 12px 32px rgba(0, 0, 0, 0.22);
+  --shadow-raised: 0 10px 26px rgba(0, 0, 0, 0.32);
 
   color-scheme: dark;
 }
@@ -87,9 +93,10 @@
     --text: #f4f1ea;
     --text-strong: rgba(244, 241, 234, 0.96);
     --text-muted: #a8a49a;
-    --text-faint: rgba(244, 241, 234, 0.45);
+    --text-faint: #aaa69c;
     --border: rgba(255, 255, 255, 0.1);
     --border-strong: rgba(255, 255, 255, 0.28);
+    --control-border: #77736c;
     --hover: rgba(255, 255, 255, 0.06);
     --tint: rgba(255, 255, 255, 0.04);
     --on-dark: #1c1c1c;
@@ -114,6 +121,7 @@
   --color-text-faint: var(--text-faint);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-control: var(--control-border);
   --color-hover: var(--hover);
   --color-tint: var(--tint);
   --color-on-dark: var(--on-dark);
@@ -152,6 +160,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
 }
 
 /* 大標題：Lovable 編輯感 — 緊收字距（拉丁）。中文字距維持自然 */
@@ -163,9 +172,27 @@ body {
 
 /* 焦點：柔和陰影 + 可見 ring（無障礙）*/
 :focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px var(--focus-ring);
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 1000;
+  transform: translateY(-180%);
+  border-radius: var(--radius-sm);
+  background: var(--text);
+  color: var(--on-dark);
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  transition: transform 180ms ease-out;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 /* 尊重 reduced-motion */
