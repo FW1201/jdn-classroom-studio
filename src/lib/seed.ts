@@ -214,7 +214,8 @@ export function ensureSeeded(): boolean {
     setCollection("walls", [seedWall()]);
     localStorage.setItem(SEED_FLAG, "1");
     return true;
-  } catch {
+  } catch (e) {
+    console.warn("[jcs] 首次範本建立失敗：", e);
     return false;
   }
 }
