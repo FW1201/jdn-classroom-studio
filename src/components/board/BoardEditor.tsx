@@ -758,6 +758,9 @@ export function BoardEditor({ boardId }: { boardId: string }) {
             <IconButton label="嵌入程式碼" onClick={() => setDialog("embed")}>
               <Code2 className="size-4.5" />
             </IconButton>
+            <IconButton label="匯入教材（PDF／DOCX／PPT）" onClick={() => setMaterialOpen(true)}>
+              <FileUp className="size-4.5" />
+            </IconButton>
             <input
               ref={fileRef}
               type="file"
