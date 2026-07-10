@@ -196,7 +196,6 @@ function seedWall(): Wall {
 /** 首次開啟（四集合皆空且未播種過）時建立示範資料；回傳是否有播種 */
 export function ensureSeeded(): boolean {
   if (typeof window === "undefined") return false;
-  console.log("[jcs] ensureSeeded invoked");
   try {
     if (localStorage.getItem(SEED_FLAG)) return false;
     const empty =
