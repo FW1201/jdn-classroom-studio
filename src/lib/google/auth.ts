@@ -184,11 +184,6 @@ export async function connectGoogle(): Promise<void> {
         picture: info.picture,
       },
     });
-    try {
-      localStorage.setItem(CONNECT_FLAG, "1");
-    } catch {
-      /* noop */
-    }
   } catch (e) {
     accessToken = null;
     setState({
