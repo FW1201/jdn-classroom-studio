@@ -39,6 +39,9 @@ import { getItem, updateItem, StorageQuotaError } from "@/lib/storage";
 import { Button, IconButton } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
+import { ExportToDriveButton, ClassroomShareButton } from "@/components/google/ExportToDrive";
+import { exportCsvAsSheet, exportHtmlAsDoc } from "@/lib/google/drive";
+import { wallToCsv, wallToHtml } from "@/lib/google/exporters";
 
 /* ---------- CSV：欄位「作者,內容」或「內容」；Google 表單匯出亦可 ---------- */
 
