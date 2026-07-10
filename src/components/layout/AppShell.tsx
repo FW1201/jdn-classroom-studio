@@ -16,9 +16,11 @@ import {
   Moon,
   Sun,
   MonitorSmartphone,
+  BookOpen,
 } from "lucide-react";
 import { useSettings } from "@/lib/hooks";
 import { setSettings } from "@/lib/storage";
+import { ensureSeeded } from "@/lib/seed";
 import { JdnBrandLinks } from "@/components/brand/JdnBrandLinks";
 
 const NAV = [
@@ -29,6 +31,7 @@ const NAV = [
   { href: "/rosters", label: "學生名單", icon: Users, color: "var(--roster)" },
   { href: "/roster-tools", label: "點名與分組", icon: Dices, color: "var(--roster)" },
   { href: "/settings", label: "設定", icon: Settings },
+  { href: "/guide", label: "使用說明", icon: BookOpen },
 ] as const;
 
 function ThemeToggle() {
