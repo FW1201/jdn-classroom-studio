@@ -808,6 +808,39 @@ export function BoardEditor({ boardId }: { boardId: string }) {
       {/* ===== 名單側欄（名單 ↔ 黑板串接）===== */}
       {rosterOpen && <RosterPanel board={board} onClose={() => setRosterOpen(false)} />}
 
+      {/* ===== 計時器 ===== */}
+      {timerOpen && <TimerPanel onClose={() => setTimerOpen(false)} />}
+
+      {/* ===== 頁面背景 ===== */}
+      {bgOpen && !present && (
+        <BgColorPopover
+          current={isMaterialPage ? undefined : page?.background}
+          isMaterialPage={isMaterialPage}
+          onPick={(color) => mutatePage(() => ({ background: color || undefined }))}
+          onApplyAll={applyBgAll}
+          onClose={() => setBgOpen(false)}
+        />
+      )}
+
+      {/* ===== 字體選擇（文字物件）===== */}
+      {fontOpen && selected?.type === "text" && (
+        <FontPicker
+          current={selected.props.fontFamily as string | undefined}
+          onPick={(fontFamily) =>
+            patchWidget(selected.id, { props: { ...selected.props, fontFamily: fontFamily || undefined } })
+          }
+          onClose={() => setFontOpen(false)}
+        />
+      )}
+
+      {/* ===== 教材匯入 ===== */}
+      {materialOpen && (
+        <MaterialImportDialog
+          onImport={importMaterial}
+          onClose={() => setMaterialOpen(false)}
+        />
+      )}
+
       {/* ===== 對話框 ===== */}
       {dialog === "video" && (
         <InputDialog
