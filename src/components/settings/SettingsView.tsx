@@ -94,6 +94,9 @@ export function SettingsView() {
           </p>
         </Card>
 
+        {/* Google 雲端同步（選配） */}
+        <GoogleAccountCard />
+
         <Card className="flex flex-col gap-4 p-5">
           <div>
             <h2 className="text-lg font-bold">關於與社群</h2>
