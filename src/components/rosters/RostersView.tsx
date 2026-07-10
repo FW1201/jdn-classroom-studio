@@ -20,6 +20,9 @@ import { useCollection, useHydrated } from "@/lib/hooks";
 import { createItem, deleteItem, updateItem } from "@/lib/storage";
 import type { Roster, Student } from "@/lib/types";
 import { Dialog } from "@/components/ui/Dialog";
+import { ExportToDriveButton } from "@/components/google/ExportToDrive";
+import { exportCsvAsSheet } from "@/lib/google/drive";
+import { rosterToCsv } from "@/lib/google/exporters";
 
 /* ---------- CSV 匯入：欄位「座號,姓名,標籤」（表頭可有可無）---------- */
 
