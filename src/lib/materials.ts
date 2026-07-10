@@ -173,7 +173,7 @@ export async function pickDriveFile(
   if (!GOOGLE_PICKER_API_KEY) throw new Error("尚未設定 Google API Key（NEXT_PUBLIC_GOOGLE_API_KEY）");
   const token = await getAccessToken();
   await loadPicker();
-  const picker = window.google.picker;
+  const picker = pickerNs();
   return new Promise((resolve) => {
     const view = new picker.DocsView(picker.ViewId.DOCS).setMimeTypes(mimeTypes);
     new picker.PickerBuilder()
