@@ -171,6 +171,11 @@ export function BoardEditor({ boardId }: { boardId: string }) {
   const [dialog, setDialog] = useState<WidgetType | null>(null);
   const [spot, setSpot] = useState({ x: 0.5, y: 0.5 });
   const [rosterOpen, setRosterOpen] = useState(false);
+  const [materialOpen, setMaterialOpen] = useState(false);
+  const [timerOpen, setTimerOpen] = useState(false);
+  const [bgOpen, setBgOpen] = useState(false);
+  const [fontOpen, setFontOpen] = useState(false);
+  const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -178,6 +183,32 @@ export function BoardEditor({ boardId }: { boardId: string }) {
   const [liveStroke, setLiveStroke] = useState<Stroke | null>(null);
 
   const page: BoardPage | undefined = board?.pages[pageIndex];
+
+  /* ----- 逐頁顯示模式：頁面等比縮放置中（無平移/縮放手勢）----- */
+  const paged = (board?.displayMode ?? "canvas") === "paged";
+  const isMaterialPage = !!page?.background?.startsWith("data:");
+  const pageDim = page?.bgSize ?? { w: 1280, h: 720 };
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() =>
+      setContainerSize({ w: el.clientWidth, h: el.clientHeight })
+    );
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const fitScale =
+    containerSize.w > 0
+      ? Math.min(containerSize.w / pageDim.w, containerSize.h / pageDim.h) * 0.96
+      : 1;
+  const fitView = {
+    scale: fitScale,
+    x: (containerSize.w - pageDim.w * fitScale) / 2,
+    y: (containerSize.h - pageDim.h * fitScale) / 2,
+  };
+  const effView = paged ? fitView : view;
 
   useEffect(() => {
     if (board) syncZCounter(board.pages.flatMap((p) => p.widgets));
