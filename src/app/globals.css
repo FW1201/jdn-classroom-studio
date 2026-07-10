@@ -1,0 +1,194 @@
+@import "tailwindcss" source("../");
+
+/* ============================================================
+   jdn-classroom-studio — 設計語言
+   底層：Lovable（暖奶油 cream / 炭黑 charcoal / 不透明度灰階 / #eceae4 邊線）
+   疊加：ui-ux-pro-max「Exaggerated Minimalism」— 大字級、高對比、留白，服務課堂投影可讀性
+   四個功能色（board/game/wall/roster）僅用於小標籤與圖示著色，非飽和背景
+   ============================================================ */
+
+:root {
+  /* --- Lovable 中性核心（Light / 奶油）--- */
+  --bg: #f7f4ed;             /* 頁面背景：暖奶油，非純白 */
+  --surface: #f7f4ed;        /* 卡片表面，與背景無縫 */
+  --surface-raised: #fcfbf8; /* 微抬升表面（off-white）*/
+  --text: #1c1c1c;           /* 主文字：炭黑，帶暖度 */
+  --text-strong: rgba(28, 28, 28, 0.92);
+  --text-muted: #5f5f5d;     /* 次要文字 / 說明 */
+  --text-faint: rgba(28, 28, 28, 0.4);
+  --border: #eceae4;         /* 被動邊線 / 分隔 */
+  --border-strong: rgba(28, 28, 28, 0.4); /* 互動邊線 */
+  --hover: rgba(28, 28, 28, 0.04);
+  --tint: rgba(28, 28, 28, 0.03);
+  --on-dark: #fcfbf8;        /* 深色按鈕上的文字 */
+
+  /* --- 功能色（wayfinding，四大資料 / 三模式）--- */
+  --board: #2f6f6a;          /* 教學黑板：沉靜青 */
+  --game: #6d5bd0;           /* 互動遊戲：暖紫 */
+  --wall: #c9663e;           /* 成果收集牆：陶土橘 */
+  --roster: #4a7c59;         /* 學生名單：沉綠 */
+  --star: #d99a2b;           /* 加星 / 亮點 */
+  --danger: #c0392b;         /* 破壞性動作 */
+  --focus-ring: rgba(59, 130, 246, 0.5);
+
+  /* --- 半徑 / 陰影（Lovable：淺陰影、以邊線為主）--- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --shadow-inset:
+    rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset,
+    rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset,
+    rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  --shadow-focus: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  /* 暖近黑，保留奶油系的溫度；服務黑板與投影高對比 */
+  --bg: #141310;
+  --surface: #1c1a16;
+  --surface-raised: #24211c;
+  --text: #f4f1ea;
+  --text-strong: rgba(244, 241, 234, 0.96);
+  --text-muted: #a8a49a;
+  --text-faint: rgba(244, 241, 234, 0.45);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.28);
+  --hover: rgba(255, 255, 255, 0.06);
+  --tint: rgba(255, 255, 255, 0.04);
+  --on-dark: #1c1c1c; /* 深色模式下主按鈕底色為亮色，文字翻轉為深 */
+
+  --board: #5bb8b0;
+  --game: #a996f5;
+  --wall: #e89268;
+  --roster: #7cc492;
+  --star: #f0c05a;
+  --danger: #e5705f;
+
+  --shadow-inset:
+    rgba(255, 255, 255, 0.08) 0px 0.5px 0px 0px inset,
+    rgba(0, 0, 0, 0.5) 0px 0px 0px 0.5px inset,
+    rgba(0, 0, 0, 0.3) 0px 1px 2px 0px;
+  --shadow-focus: rgba(0, 0, 0, 0.4) 0px 4px 14px;
+
+  color-scheme: dark;
+}
+
+/* 對照系統偏好（若使用者未手動設定 data-theme，layout 的 inline script 會補上）*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg: #141310;
+    --surface: #1c1a16;
+    --surface-raised: #24211c;
+    --text: #f4f1ea;
+    --text-strong: rgba(244, 241, 234, 0.96);
+    --text-muted: #a8a49a;
+    --text-faint: rgba(244, 241, 234, 0.45);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.28);
+    --hover: rgba(255, 255, 255, 0.06);
+    --tint: rgba(255, 255, 255, 0.04);
+    --on-dark: #1c1c1c;
+    --board: #5bb8b0;
+    --game: #a996f5;
+    --wall: #e89268;
+    --roster: #7cc492;
+    --star: #f0c05a;
+    --danger: #e5705f;
+    color-scheme: dark;
+  }
+}
+
+/* ---- Tailwind v4 主題映射：把 runtime CSS 變數暴露為 utility ---- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-text: var(--text);
+  --color-text-strong: var(--text-strong);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-hover: var(--hover);
+  --color-tint: var(--tint);
+  --color-on-dark: var(--on-dark);
+
+  --color-board: var(--board);
+  --color-game: var(--game);
+  --color-wall: var(--wall);
+  --color-roster: var(--roster);
+  --color-star: var(--star);
+  --color-danger: var(--danger);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --font-sans: var(--font-nunito), var(--font-noto-tc), ui-sans-serif, system-ui,
+    "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-display: var(--font-nunito), var(--font-noto-tc), ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 大標題：Lovable 編輯感 — 緊收字距（拉丁）。中文字距維持自然 */
+.display {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+/* 焦點：柔和陰影 + 可見 ring（無障礙）*/
+:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* 尊重 reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 自訂捲軸（低干擾）*/
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

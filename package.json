@@ -1,0 +1,36 @@
+{
+  "name": "jdn-classroom-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@use-gesture/react": "^10.3.1",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.24.0",
+    "nanoid": "^5.1.16",
+    "next": "16.2.10",
+    "papaparse": "^5.5.4",
+    "perfect-freehand": "^1.2.3",
+    "qrcode": "^1.5.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-rnd": "^10.5.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/papaparse": "^5.5.2",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
