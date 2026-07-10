@@ -203,17 +203,19 @@ export function GuideView() {
         className="fade-up mt-8 flex flex-wrap items-center justify-center gap-3"
         style={{ "--stagger": "660ms" } as React.CSSProperties}
       >
-        <Link href="/">
-          <Button variant="primary">
-            開始使用
-            <ArrowRight className="size-4.5" aria-hidden />
-          </Button>
+        <Link
+          href="/"
+          className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-sm bg-text px-4 text-base font-medium text-on-dark [box-shadow:var(--shadow-inset)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:[box-shadow:var(--shadow-raised)]"
+        >
+          開始使用
+          <ArrowRight className="size-4.5" aria-hidden />
         </Link>
-        <Link href="/settings">
-          <Button variant="ghost">
-            <RotateCcw className="size-4.5" aria-hidden />
-            到設定備份／連接 Google
-          </Button>
+        <Link
+          href="/settings"
+          className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-sm border border-border-strong bg-transparent px-4 text-base font-medium text-text transition-colors duration-200 hover:bg-hover"
+        >
+          <RotateCcw className="size-4.5" aria-hidden />
+          到設定備份／連接 Google
         </Link>
       </div>
     </>
