@@ -93,6 +93,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
+  // 首次開啟：自動建立四份教學級示範資料（示範班級／黑板／視覺化／成果牆）
+  useEffect(() => {
+    ensureSeeded();
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     closeButtonRef.current?.focus();
