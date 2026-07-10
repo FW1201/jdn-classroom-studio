@@ -41,7 +41,8 @@ export async function pdfToPages(
   onProgress?: (done: number, total: number) => void
 ): Promise<MaterialPage[]> {
   const pdfjs = await loadPdfjs();
-  const doc = await pdfjs.getDocument({ data }).promise;
+  const loadingTask = pdfjs.getDocument({ data });
+  const doc = await loadingTask.promise;
   const pages: MaterialPage[] = [];
   for (let i = 1; i <= doc.numPages; i++) {
     const page = await doc.getPage(i);
