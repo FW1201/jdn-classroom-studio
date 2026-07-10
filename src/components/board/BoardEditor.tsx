@@ -237,16 +237,16 @@ export function BoardEditor({ boardId }: { boardId: string }) {
     [mutatePage]
   );
 
-  /* ----- 畫布座標轉換 ----- */
+  /* ----- 畫布座標轉換（canvas 用自由視角；paged 用 fit 視角）----- */
   const toStage = useCallback(
     (clientX: number, clientY: number): [number, number] => {
       const rect = containerRef.current!.getBoundingClientRect();
       return [
-        (clientX - rect.left - view.x) / view.scale,
-        (clientY - rect.top - view.y) / view.scale,
+        (clientX - rect.left - effView.x) / effView.scale,
+        (clientY - rect.top - effView.y) / effView.scale,
       ];
     },
-    [view]
+    [effView.x, effView.y, effView.scale]
   );
 
   /* ----- 平移 / 縮放手勢 ----- */
