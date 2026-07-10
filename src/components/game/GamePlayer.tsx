@@ -11,6 +11,8 @@ import { Home, RotateCcw, Maximize, Gamepad2 } from "lucide-react";
 import { useItem } from "@/lib/hooks";
 import { Button, IconButton } from "@/components/ui/Button";
 import { SandboxFrame } from "@/components/sandbox/SandboxFrame";
+import { ExportToDriveButton } from "@/components/google/ExportToDrive";
+import { exportRawFile } from "@/lib/google/drive";
 
 export function GamePlayer() {
   const params = useParams<{ id: string }>();
