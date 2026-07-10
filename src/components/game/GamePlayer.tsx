@@ -40,6 +40,10 @@ export function GamePlayer() {
           <h1 className="truncate text-lg font-bold">{game.title}</h1>
         </div>
         <div className="flex items-center gap-1.5">
+          <ExportToDriveButton
+            label="存到 Drive"
+            makeExport={() => exportRawFile(`${game.title}.html`, game.html)}
+          />
           <IconButton label="重新開始" onClick={() => setRunKey((k) => k + 1)}>
             <RotateCcw className="size-4.5" />
           </IconButton>
