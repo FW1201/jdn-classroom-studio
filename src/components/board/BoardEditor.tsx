@@ -281,6 +281,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
     },
     {
       target: containerRef,
+      enabled: !paged, // 逐頁模式固定視角，停用平移/縮放手勢
       drag: { pointer: { buttons: [1] } },
       wheel: { eventOptions: { passive: false } },
       pinch: { scaleBounds: { min: 0.2, max: 3 } },
