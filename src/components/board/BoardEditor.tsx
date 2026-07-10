@@ -542,7 +542,7 @@ export function BoardEditor({ boardId }: { boardId: string }) {
                 data-widget
                 size={{ width: w.w, height: w.h }}
                 position={{ x: w.x, y: w.y }}
-                scale={view.scale}
+                scale={effView.scale}
                 style={{ zIndex: w.z }}
                 disableDragging={present || w.locked || drawingMode}
                 enableResizing={!present && !w.locked && !drawingMode && selectedId === w.id}
