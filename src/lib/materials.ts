@@ -46,7 +46,9 @@ export async function pdfToPages(
   console.log("[mat] loading pdfjs…");
   const pdfjs = await loadPdfjs();
   console.log("[mat] pdfjs loaded, version:", pdfjs.version, "port:", !!pdfjs.GlobalWorkerOptions.workerPort);
-  const loadingTask = pdfjs.getDocument({ data });
+  // useSystemFonts：非內嵌的標準 14 字體改用系統字體，
+  // 避免 render 卡在 standardFontDataUrl 資源抓取
+  const loadingTask = pdfjs.getDocument({ data, useSystemFonts: true });
   loadingTask.promise.then(
     () => console.log("[mat] getDocument resolved"),
     (e) => console.log("[mat] getDocument REJECTED:", e?.message)
