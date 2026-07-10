@@ -189,15 +189,16 @@ export function BoardEditor({ boardId }: { boardId: string }) {
   const isMaterialPage = !!page?.background?.startsWith("data:");
   const pageDim = page?.bgSize ?? { w: 1280, h: 720 };
 
+  const boardLoaded = !!board;
   useEffect(() => {
     const el = containerRef.current;
-    if (!el) return;
+    if (!el) return; // board 載入後 container 才存在，故 deps 需含 boardLoaded
     const ro = new ResizeObserver(() =>
       setContainerSize({ w: el.clientWidth, h: el.clientHeight })
     );
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [boardLoaded]);
 
   const fitScale =
     containerSize.w > 0
