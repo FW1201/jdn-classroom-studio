@@ -92,7 +92,7 @@ export function boardToHtml(board: Board): string {
               return `<div style="${base}background:${String(p.color || "#fff6c9")};padding:8px;font-size:24px;white-space:pre-wrap">${htmlEscape(String(p.content ?? ""))}</div>`;
             case "image":
               return p.src
-                ? `<img src="${String(p.src)}" style="${base}object-fit:contain" />`
+                ? `<img src="${htmlEscape(String(p.src))}" style="${base}object-fit:contain" />`
                 : "";
             case "link":
             case "qr":
