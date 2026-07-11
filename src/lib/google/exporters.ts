@@ -14,10 +14,12 @@ function csvEscape(value: string): string {
 }
 
 function htmlEscape(s: string): string {
+  // 含屬性用途（如 src="..."），一併跳脫雙引號避免屬性被跳脫出去
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 /* ---------- 名單 → CSV（→ Sheets）---------- */
