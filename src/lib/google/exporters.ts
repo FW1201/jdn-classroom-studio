@@ -6,8 +6,11 @@
 import type { Board, Roster, Wall } from "@/lib/types";
 
 function csvEscape(value: string): string {
-  if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
-  return value;
+  // 防公式注入（CSV Injection）：開頭是 =+-@ 會被 Sheets/Excel 當公式執行，
+  // 前綴單引號讓試算表視為純文字
+  const safe = /^[=+\-@]/.test(value) ? `'${value}` : value;
+  if (/[",\n]/.test(safe)) return `"${safe.replace(/"/g, '""')}"`;
+  return safe;
 }
 
 function htmlEscape(s: string): string {
@@ -50,7 +53,7 @@ export function wallToHtml(wall: Wall): string {
     .map((c) => {
       const body =
         c.kind === "image"
-          ? `<img src="${c.content}" style="max-width:480px" />`
+          ? `<img src="${htmlEscape(c.content)}" style="max-width:480px" />`
           : `<p style="font-size:14pt;margin:0 0 4pt">${htmlEscape(c.content)}</p>`;
       const author = c.author
         ? `<p style="color:#666;margin:0 0 12pt">— ${htmlEscape(c.author)}${c.starred ? " ★" : ""}</p>`
