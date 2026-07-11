@@ -8,12 +8,31 @@
 
 import { useMemo } from "react";
 
-/** 若貼入的是 <iframe src="..."> 嵌入碼，抽出 src 直接用外部 iframe */
+/** 允許以「一般 iframe＋allow-same-origin」信任的嵌入服務網域白名單 */
+const TRUSTED_EMBED_HOSTS = [
+  "youtube.com",
+  "youtube-nocookie.com",
+  "wordwall.net",
+  "genial.ly",
+  "docs.google.com",
+];
+
+function isTrustedEmbedHost(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return TRUSTED_EMBED_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
+  } catch {
+    return false;
+  }
+}
+
+/** 若貼入的是 <iframe src="..."> 嵌入碼，且來源在白名單內，抽出 src 直接用外部 iframe */
 function extractIframeSrc(html: string): string | null {
   const trimmed = html.trim();
   if (!/^<iframe[\s>]/i.test(trimmed)) return null;
   const m = trimmed.match(/src=["']([^"']+)["']/i);
-  return m ? m[1] : null;
+  const src = m ? m[1] : null;
+  return src && isTrustedEmbedHost(src) ? src : null;
 }
 
 export function SandboxFrame({
