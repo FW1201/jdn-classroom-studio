@@ -75,7 +75,7 @@ export default function PrivacyPage() {
           <p>
             「互動視覺化」模式允許你貼上 AI 生成的 HTML 程式碼並執行。這些程式碼一律在隔離的沙箱（iframe sandbox，不含
             <code className="mx-1 rounded bg-surface px-1.5 py-0.5 text-xs">allow-same-origin</code>
-            權限）中執行，無法存取本工具的頁面內容、localStorage 資料，或你的瀏覽器 Cookie。
+            權限）中執行，無法存取本工具的頁面內容、本機儲存資料，或你的瀏覽器 Cookie。
           </p>
         </Section>
 
