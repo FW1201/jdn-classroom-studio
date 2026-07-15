@@ -32,7 +32,7 @@ export default function PrivacyPage() {
         <Section title="一、核心原則：本機優先，資料不上傳">
           <p>
             本工具預設<strong className="text-text">無需登入、無需帳號</strong>。你在教學黑板、互動視覺化、成果收集牆、學生名單中建立的所有資料，
-            只會儲存在你目前使用瀏覽器的 localStorage（本機儲存空間）。這些資料<strong className="text-text">不會被傳送到我們的伺服器</strong>——
+            只會儲存在你目前使用瀏覽器的本機儲存空間（IndexedDB）。這些資料<strong className="text-text">不會被傳送到我們的伺服器</strong>——
             事實上，本工具沒有後端伺服器，也沒有資料庫。清除瀏覽器資料、換裝置或換瀏覽器都會導致資料遺失，請養成使用「設定 → 匯出備份」的習慣。
           </p>
         </Section>
