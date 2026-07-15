@@ -142,7 +142,7 @@ export function SettingsView() {
             )}
           </p>
           <p className="text-sm leading-relaxed text-text-muted">
-            所有資料只存在此瀏覽器的 localStorage：換電腦、換瀏覽器、清除瀏覽資料都會遺失。
+            所有資料只存在此瀏覽器的本機儲存空間（IndexedDB）：換電腦、換瀏覽器、清除瀏覽資料都會遺失。
             請養成定期「匯出備份」的習慣。
           </p>
         </Card>
