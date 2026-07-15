@@ -178,7 +178,7 @@ export function GuideView() {
           <ShieldCheck className="size-5 text-roster" aria-hidden />
           <h3 className="font-bold">資料只在你手上</h3>
           <p className="text-sm leading-relaxed text-text-muted">
-            所有內容存在此瀏覽器的 localStorage，沒有伺服器、無需登入。換裝置或清瀏覽器資料會遺失。
+            所有內容存在此瀏覽器的本機儲存空間，沒有伺服器、無需登入。換裝置或清瀏覽器資料會遺失。
           </p>
         </Card>
         <Card className="flex flex-col gap-2 p-5">
