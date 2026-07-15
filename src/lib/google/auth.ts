@@ -117,6 +117,30 @@ function loadGis(): Promise<void> {
   return gisLoading;
 }
 
+// 提前預載 GIS script：若等到使用者點擊當下才開始載入，requestAccessToken()
+// 會在腳本下載完成後才觸發，這段非同步延遲常讓瀏覽器不再視為「使用者點擊直接觸發」，
+// 進而擋下授權彈出視窗（出現「有時候能連、有時候不能連」的假隨機現象）。
+if (typeof window !== "undefined" && GOOGLE_CLIENT_ID) {
+  loadGis().catch(() => {
+    /* 預載失敗不影響流程，getAccessToken() 呼叫時會再重試並回報錯誤 */
+  });
+}
+
+/** 把 GIS 回傳的原始（多為英文）錯誤代碼，轉成可操作的中文提示 */
+function friendlyAuthError(raw: string | undefined): string {
+  const msg = raw ?? "";
+  if (/popup/i.test(msg)) {
+    return "瀏覽器封鎖了 Google 登入彈出視窗，請允許本網站的彈出視窗後再試一次（通常網址列右側會出現被封鎖的圖示，點開允許）。";
+  }
+  if (/access_denied/i.test(msg)) {
+    return "這個 Google 帳號未獲授權存取。若應用程式仍在 Testing 階段，請確認已在 Google Cloud Console 的 OAuth 同意畫面把這個帳號加入「測試使用者」名單。";
+  }
+  if (/closed/i.test(msg)) {
+    return "Google 授權視窗被關閉，請再試一次並完成登入流程。";
+  }
+  return msg || "Google 連接失敗，請稍後再試。";
+}
+
 async function ensureTokenClient(): Promise<TokenClient> {
   if (tokenClient) return tokenClient;
   await loadGis();
@@ -129,7 +153,7 @@ async function ensureTokenClient(): Promise<TokenClient> {
       const pending = pendingTokenResolvers;
       pendingTokenResolvers = [];
       if (resp.error || !resp.access_token) {
-        const err = new Error(resp.error_description || resp.error || "授權被取消");
+        const err = new Error(friendlyAuthError(resp.error_description || resp.error));
         pending.forEach((p) => p.reject(err));
         return;
       }
@@ -141,7 +165,7 @@ async function ensureTokenClient(): Promise<TokenClient> {
       const pending = pendingTokenResolvers;
       pendingTokenResolvers = [];
       pending.forEach((p) =>
-        p.reject(new Error(err.message || "授權視窗被關閉"))
+        p.reject(new Error(friendlyAuthError(err.message)))
       );
     },
   });
