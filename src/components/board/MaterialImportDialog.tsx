@@ -135,6 +135,9 @@ export function MaterialImportDialog({
           [...checked].reduce((sum, i) => sum + phase.pages[i].dataUrl.length, 0) / 1024
         )
       : 0;
+  // 以裝置實際儲存配額（IndexedDB）為準，取代舊版寫死的 localStorage 5MB 門檻
+  const remainingKB = Math.max((estimateQuotaBytes() - estimateUsageBytes()) / 1024, 0);
+  const nearLimit = remainingKB > 0 && estKB > remainingKB * 0.85;
 
   return (
     <Dialog
