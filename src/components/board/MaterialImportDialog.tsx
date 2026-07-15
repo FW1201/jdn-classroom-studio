@@ -259,7 +259,7 @@ export function MaterialImportDialog({
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
             <p className="text-xs tabular-nums text-text-faint">
               已選 {checked.size} 頁・約 {estKB > 1024 ? `${(estKB / 1024).toFixed(1)} MB` : `${estKB} KB`}
-              {estKB > 3500 && (
+              {nearLimit && (
                 <span className="ml-2 inline-flex items-center gap-1 text-danger">
                   <AlertTriangle className="size-3.5" aria-hidden />
                   接近容量上限，建議減少頁數
