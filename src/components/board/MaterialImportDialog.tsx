@@ -172,8 +172,8 @@ export function MaterialImportDialog({
             </button>
           </div>
           <p className="text-xs leading-relaxed text-text-faint">
-            DOC(X)／PPT(X) 需要「連接 Google」由雲端轉檔（或先自行匯出 PDF）。頁面以圖片存於瀏覽器，
-            大型教材（30+ 頁）可能逼近容量上限，建議只勾選需要的頁面。
+            DOC(X)／PPT(X) 需要「連接 Google」由雲端轉檔（或先自行匯出 PDF）。頁面以圖片存於瀏覽器的本機儲存空間，
+            容量遠大於過去版本，大型教材也可放心整份匯入；若裝置空間真的見底才需要減少頁數。
           </p>
           <input
             ref={fileRef}
