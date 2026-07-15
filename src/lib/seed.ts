@@ -8,7 +8,7 @@
 
 import { nanoid } from "nanoid";
 import type { Board, Game, Roster, Wall } from "./types";
-import { getCollection, setCollection } from "./storage";
+import { getCollection, setCollection, whenReady } from "./storage";
 
 const SEED_FLAG = "jcs:seeded";
 
@@ -194,10 +194,12 @@ function seedWall(): Wall {
 /* ---------- 進入點 ---------- */
 
 /** 首次開啟（四集合皆空且未播種過）時建立示範資料；回傳是否有播種 */
-export function ensureSeeded(): boolean {
+export async function ensureSeeded(): Promise<boolean> {
   if (typeof window === "undefined") return false;
   try {
     if (localStorage.getItem(SEED_FLAG)) return false;
+    // 等 IndexedDB（含舊 localStorage 資料搬遷）就緒，避免誤判為空集合而重複播種
+    await whenReady();
     const empty =
       getCollection("rosters").length === 0 &&
       getCollection("boards").length === 0 &&

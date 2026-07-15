@@ -9,6 +9,7 @@ import { useSettings } from "@/lib/hooks";
 import {
   clearAll,
   downloadExport,
+  estimateQuotaBytes,
   estimateUsageBytes,
   importAll,
   setSettings,
@@ -20,10 +21,12 @@ import { Dialog } from "@/components/ui/Dialog";
 import { JdnBrandLinks } from "@/components/brand/JdnBrandLinks";
 import { GoogleAccountCard } from "@/components/google/GoogleAccountCard";
 
-const LIMIT = 5 * 1024 * 1024;
-
 function useUsage() {
   return useSyncExternalStore(subscribe, estimateUsageBytes, () => 0);
+}
+
+function useQuota() {
+  return useSyncExternalStore(subscribe, estimateQuotaBytes, () => 5 * 1024 * 1024);
 }
 
 const THEMES = [
@@ -35,11 +38,14 @@ const THEMES = [
 export function SettingsView() {
   const settings = useSettings();
   const usage = useUsage();
+  const quota = useQuota();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pendingImport, setPendingImport] = useState<ExportBundle | null>(null);
   const [notice, setNotice] = useState("");
-  const ratio = Math.min(usage / LIMIT, 1);
+  const ratio = quota > 0 ? Math.min(usage / quota, 1) : 0;
   const mb = (usage / 1024 / 1024).toFixed(2);
+  const quotaMb = quota / 1024 / 1024;
+  const quotaLabel = quotaMb >= 1024 ? `${(quotaMb / 1024).toFixed(1)} GB` : `${quotaMb.toFixed(0)} MB`;
 
   function handleImport(file: File) {
     file.text().then((text) => {
@@ -116,7 +122,7 @@ export function SettingsView() {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(ratio * 100)}
-            aria-label="localStorage 使用量"
+            aria-label="裝置儲存空間使用量"
             className="h-3 overflow-hidden rounded-full border border-border bg-surface-raised"
           >
             <div
@@ -128,7 +134,7 @@ export function SettingsView() {
             />
           </div>
           <p className="text-sm tabular-nums text-text-muted">
-            已使用 {mb} MB / 約 5 MB（{Math.round(ratio * 100)}%）
+            已使用 {mb} MB / 約 {quotaLabel}（{Math.round(ratio * 100)}%）
             {ratio > 0.85 && (
               <span className="ml-2 font-medium text-danger">
                 空間吃緊——請匯出備份並刪除舊資料
