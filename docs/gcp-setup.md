@@ -40,19 +40,38 @@
 5. 「已授權的重新導向 URI」**留空**（GIS token model 不需要）
 6. 建立 → 複製 **用戶端 ID**（形如 `xxxx.apps.googleusercontent.com`）
 
-## 5. 交付
+## 5. 建立 Google Picker API 金鑰（雲端匯入教材用）
 
-把 Client ID 貼給 Claude Code，或自行設定：
+> 這支金鑰跟第 4 步的 OAuth Client ID 是**兩個不同的憑證**：Client ID 負責登入授權，
+> 這支 API 金鑰負責讓「選擇 Google 雲端硬碟教材」的檔案選擇視窗（Picker）能開啟。
+> 沒設定這步，畫面上會顯示「需設定 Google API Key」，「從 Google 雲端硬碟」按鈕會被停用。
+
+1. 「API 和服務」→「程式庫」→ 搜尋 **Google Picker API** → 啟用
+   （這是跟第 2 步 Drive API 分開的另一個 API，要各自啟用）
+2. 「API 和服務」→「憑證」→「建立憑證」→「API 金鑰」
+3. 建立後點進去「編輯 API 金鑰」設定限制（務必設定，避免金鑰被盜用在其他網站）：
+   - **應用程式限制**：選「HTTP 參照網址（網站）」，加入三筆：
+     - `http://localhost:3000/*`
+     - `http://localhost:4700/*`
+     - `https://jdn-classroom-studio.vercel.app/*`
+   - **API 限制**：選「限制金鑰」，只勾選 **Google Picker API**
+4. 複製金鑰（形如 `AIzaSy...`）
+
+## 6. 交付
+
+把 Client ID 與 API 金鑰一起貼給 Claude Code，或自行設定：
 
 ```bash
 # 本機開發：專案根目錄 .env.local
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=xxxx.apps.googleusercontent.com
+NEXT_PUBLIC_GOOGLE_API_KEY=AIzaSy...
 
 # Vercel
 vercel env add NEXT_PUBLIC_GOOGLE_CLIENT_ID production
+vercel env add NEXT_PUBLIC_GOOGLE_API_KEY production
 ```
 
-## 6. 上線前（可先不做）
+## 7. 上線前（可先不做）
 
 - Testing 階段：只有測試使用者能連接，**開發與自用已足夠**
 - 要開放所有老師使用時：OAuth 同意畫面 →「發布應用程式」→ In production
