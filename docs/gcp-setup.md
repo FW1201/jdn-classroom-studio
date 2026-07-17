@@ -1,6 +1,6 @@
 # GCP OAuth 設定手冊（Google 雲端同步啟用步驟）
 
-> 完成後把 **Client ID** 交給 Claude Code / Codex 寫入環境變數即可。
+> 完成後把 **Client ID** 與 **Picker API 金鑰** 交給 Claude Code / Codex 寫入環境變數即可。
 > 全程只用「非敏感」scopes（`drive.file`、`drive.appdata`），不需要安全評估。
 
 ## 1. 建立 GCP 專案
