@@ -82,3 +82,4 @@ vercel env add NEXT_PUBLIC_GOOGLE_API_KEY production
 - access token 只存在瀏覽器記憶體，重新整理即消失（會靜默重新取得）
 - 本站只能存取「自己建立」的 Drive 檔案，無法讀取使用者雲端硬碟的其他內容
 - 備份存於 `appDataFolder`（應用程式專屬空間），使用者在 Drive 設定中可隨時整批刪除
+- API 金鑰（`NEXT_PUBLIC_GOOGLE_API_KEY`）已用 HTTP 參照網址＋API 限制收斂，即使外流也只能用來開啟本站網域的 Picker，無法用於其他網站或呼叫其他 API
