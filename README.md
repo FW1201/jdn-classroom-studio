@@ -1,5 +1,7 @@
 # JDN 課堂工作站（jdn-classroom-studio）
 
+> **已整併**：本專案的教學黑板、成果收集牆、點名分組已搬入 [FW1201/tbcl-ai-material-system](https://github.com/FW1201/tbcl-ai-material-system)（華語課堂互動模組），本 repo 封存為唯讀。AI 互動遊戲範本、Google Drive 匯出、PDF／Word 教材匯入未搬移，仍保留於此。
+
 教師單機、投影導向、**無登入** 的課堂工作站。三大模式 + 一個管理中樞，所有資料只存在瀏覽器 localStorage。
 
 > 舊專案 `jdn-teaching-toolbox`（30+ 無 AI 小工具）大規模重構後的新定位，靈感取自 TeacherSay 的互動白板概念。
